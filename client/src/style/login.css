@@ -1,0 +1,34 @@
+.loginForm{
+    width: 30%;
+    margin-top: 20px;
+    margin-left: 20%;
+    background-color: #e2e3e7;
+    border-radius: 22px;
+}
+
+.loginForm .mb-3{
+    width: 80%;
+    margin-left: 10%;
+}
+
+.loginForm .d-grid .btn-primary{
+    width: 80%;
+    margin-left: 10%;
+    background-color: #ffffff;
+    color:black
+}
+.loginForm .d-grid .btn-primary:hover{
+    width: 80%;
+    margin-left: 10%;
+    background-color: #768eed;
+    color:#000000
+}
+
+.loginForm .forgot-btn{
+    text-decoration: none;
+}
+
+.loginForm .forgot-btn:hover{
+    text-decoration: none;
+    color: #000000;
+}
