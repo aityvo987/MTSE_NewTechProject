@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const dbConfig = require("../app/config/db.config");
+const dbConfig = require("./app/config/db.config");
 
 const app = express();
 
@@ -20,11 +20,11 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const db = require("../app/models");
+const db = require("./app/models");
 const Role = db.role;
 mongodb://
 db.mongoose
-  .connect(`mongodb+srv://dat:dat@atlascluster.kxtotbl.mongodb.net/?retryWrites=true&w=majority`, {
+  .connect(`mongodb+srv://dat:dat@atlascluster.kxtotbl.mongodb.net/new_tech?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
@@ -43,8 +43,10 @@ app.get("/", (req, res) => {
 });
 
 // routes
-require("../app/routes/auth.routes")(app);
-require("../app/routes/user.routes")(app);
+require("./app/routes/auth.routes")(app);
+require("./app/routes/user.routes")(app);
+require("./app/routes/faculty.routes")(app);
+require("./app/routes/major.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;
