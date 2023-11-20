@@ -1,11 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const studentController = require('../controllers/studentController');
+//const { authJwt } = require('../middlewares');
+const studentController = require('../controllers/student.controller');
 
-// Routes
-router.post('/students', studentController.addStudent);
-router.get('/students', studentController.getAllStudents);
-router.put('/students/:id', studentController.updateStudent);
-router.delete('/students/:id', studentController.deleteStudent);
+module.exports = function (app) {
+  // Enable CORS (Cross-Origin Resource Sharing) headers
+  app.use(function (req, res, next) {
+    res.header(
+      'Access-Control-Allow-Headers',
+      'x-access-token, Origin, Content-Type, Accept'
+    );
+    next();
+  });
 
-module.exports = router;
+  // Define major routes
+  app.post('/api/students', studentController.addStudent);
+  app.get('/api/students', studentController.getAllStudents);
+};

@@ -1,68 +1,44 @@
-const Student = require('../models/studentModel');
+const mongoose = require('mongoose');
+const Student = require('../models/student.model');
 
-// Controller methods for handling CRUD operations
-module.exports = {
-    addStudent: async (req, res) => {
-        try {
-            // Assuming you have a facultyId in the request body
-            const facultyId = req.body.facultyId;
-            // Validate facultyId
-            if (!facultyId) {
-                return res.status(400).json({ error: 'Faculty ID is required' });
-            }
+exports.addStudent = async (req, res) => {
+  try {
+    const { name, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
 
-            const faculty = await Faculty.findById(facultyId);
+    // Validate faculty and major as valid ObjectId values
+    if (!mongoose.Types.ObjectId.isValid(faculty)) {
+      return res.status(400).json({ error: 'Invalid faculty ObjectId' });
+    }
 
-            if (!faculty) {
-                return res.status(404).json({ error: 'Faculty not found' });
-            }
+    if (!mongoose.Types.ObjectId.isValid(major)) {
+      return res.status(400).json({ error: 'Invalid major ObjectId' });
+    }
 
-            const majorId = req.body.majorId;
-            if (!majorId) {
-                return res.status(400).json({ error: 'Major ID is required' });
-            }
+    const newStudent = new Student({
+      name,
+      studentId,
+      email,
+      dateOfBirth,
+      phoneNumber,
+      faculty,
+      major,
+    });
 
-            const major = await Major.findById(majorId);
+    const savedStudent = await newStudent.save();
+    res.status(201).json(savedStudent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
-            if (!major) {
-                return res.status(404).json({ error: 'Major not found' });
-            }
-
-            const newStudent = await Student.create({
-                ...req.body,
-                faculty: faculty._id,
-            });
-
-            res.json(newStudent);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
-
-    getAllStudents: async (req, res) => {
-        try {
-            const students = await Student.find();
-            res.json(students);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
-
-    updateStudent: async (req, res) => {
-        try {
-            const updatedStudent = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
-            res.json(updatedStudent);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
-
-    deleteStudent: async (req, res) => {
-        try {
-            await Student.findByIdAndDelete(req.params.id);
-            res.json({ message: 'Student deleted successfully' });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
+// Controller to get all students
+exports.getAllStudents = async (req, res) => {
+  try {
+    const students = await Student.find().populate('faculty').populate('major');
+    res.status(200).json(students);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
