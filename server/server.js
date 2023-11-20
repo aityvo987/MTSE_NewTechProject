@@ -47,6 +47,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 require("./app/routes/faculty.routes")(app);
 require("./app/routes/major.routes")(app);
+require("./app/routes/student.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 5000;
