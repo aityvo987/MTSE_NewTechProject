@@ -10,6 +10,8 @@ db.role = require("./role.model");
 db.falcuty = require("./faculty.model")
 db.student = require("./student.model")
 db.major = require("./major.model")
+db.lecture = require("./lecture.model")
+db.topic = require("./topic.model")
 
 db.ROLES = ["user", "admin", "moderator"];
 
