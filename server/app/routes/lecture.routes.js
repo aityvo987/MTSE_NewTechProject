@@ -13,4 +13,6 @@ module.exports = function (app) {
   // Define lecture routes
   app.post('/api/lectures', lectureController.addLecture);
   app.get('/api/lectures', lectureController.getAllLectures);
+  app.put('/api/lectures/:id', lectureController.updateLecture);
+  app.patch('/api/lectures/:id/status', lectureController.updateStatusLecture);
 };

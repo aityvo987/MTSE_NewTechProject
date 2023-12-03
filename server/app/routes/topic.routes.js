@@ -13,4 +13,6 @@ module.exports = function (app) {
   // Define topic routes
   app.post('/api/topics', topicController.addTopic);
   app.get('/api/topics', topicController.getAllTopics);
+  app.put('/api/topics/:topicId', topicController.updateTopic);
+  app.delete('/api/topics/:topicId', topicController.deleteTopic);
 };
