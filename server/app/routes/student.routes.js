@@ -14,4 +14,6 @@ module.exports = function (app) {
   // Define major routes
   app.post('/api/students', studentController.addStudent);
   app.get('/api/students', studentController.getAllStudents);
+  app.put('/api/students/:id', studentController.updateStudent);
+  app.patch('/api/students/:id/status', studentController.updateStatusStudent);
 };

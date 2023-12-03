@@ -1,44 +1,111 @@
 const mongoose = require('mongoose');
 const Student = require('../models/student.model');
 
-exports.addStudent = async (req, res) => {
-  try {
-    const { name, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
+module.exports = {
+  addStudent: async (req, res) => {
+    try {
+      const { name, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
 
-    // Validate faculty and major as valid ObjectId values
-    if (!mongoose.Types.ObjectId.isValid(faculty)) {
-      return res.status(400).json({ error: 'Invalid faculty ObjectId' });
+      // Validate faculty and major as valid ObjectId values
+      if (!mongoose.Types.ObjectId.isValid(faculty)) {
+        return res.status(400).json({ error: 'Invalid faculty ObjectId' });
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(major)) {
+        return res.status(400).json({ error: 'Invalid major ObjectId' });
+      }
+
+      const newStudent = new Student({
+        name,
+        studentId,
+        email,
+        dateOfBirth,
+        phoneNumber,
+        faculty,
+        major,
+      });
+
+      const savedStudent = await newStudent.save();
+      res.status(201).json(savedStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
+  },
 
-    if (!mongoose.Types.ObjectId.isValid(major)) {
-      return res.status(400).json({ error: 'Invalid major ObjectId' });
+  // Controller to get all students
+  getAllStudents: async (req, res) => {
+    try {
+      const students = await Student.find().populate('faculty').populate('major');
+      res.status(200).json(students);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
+  },
 
-    const newStudent = new Student({
-      name,
-      studentId,
-      email,
-      dateOfBirth,
-      phoneNumber,
-      faculty,
-      major,
-    });
+  // Controller to update student (excluding isActive)
+  updateStudent: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
 
-    const savedStudent = await newStudent.save();
-    res.status(201).json(savedStudent);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
+      // Validate faculty and major as valid ObjectId values
+      if (faculty && !mongoose.Types.ObjectId.isValid(faculty)) {
+        return res.status(400).json({ error: 'Invalid faculty ObjectId' });
+      }
 
-// Controller to get all students
-exports.getAllStudents = async (req, res) => {
-  try {
-    const students = await Student.find().populate('faculty').populate('major');
-    res.status(200).json(students);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
+      if (major && !mongoose.Types.ObjectId.isValid(major)) {
+        return res.status(400).json({ error: 'Invalid major ObjectId' });
+      }
+
+      const updatedStudent = await Student.findByIdAndUpdate(
+        id,
+        {
+          name,
+          studentId,
+          email,
+          dateOfBirth,
+          phoneNumber,
+          faculty,
+          major,
+        },
+        { new: true }
+      ).populate('faculty').populate('major');
+
+      if (!updatedStudent) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      res.json(updatedStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  // Controller to deactivate student
+  updateStatusStudent: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body
+
+      const deactivatedStudent = await Student.findByIdAndUpdate(
+        id,
+        { isActive },
+        { new: true }
+      );
+
+      if (!deactivatedStudent) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      res.json(deactivatedStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+}
+
+

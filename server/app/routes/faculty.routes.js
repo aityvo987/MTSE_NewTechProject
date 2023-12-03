@@ -11,5 +11,7 @@ module.exports = function(app) {
   });
 
   app.post('/api/faculties',  facultyController.addFaculty);
-  app.get('/api/faculties',  facultyController.getAllFaculties);
+  app.get('/api/faculties',  facultyController.getAllFaculties)
+  app.put('/api/faculties/:facultyId', facultyController.editFaculty);
+  app.delete('/api/faculties/:facultyId', facultyController.deleteFaculty);
 };

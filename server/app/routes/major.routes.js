@@ -12,4 +12,6 @@ module.exports = function(app) {
 
   app.post('/api/majors', majorController.addMajor);
   app.get('/api/majors', majorController.getAllMajors);
+  app.put('/api/majors/:majorId', majorController.editMajor);
+  app.delete('/api/majors/:majorId', majorController.deleteMajor);
 };

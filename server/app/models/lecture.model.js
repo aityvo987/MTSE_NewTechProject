@@ -6,10 +6,14 @@ const lectureSchema = new mongoose.Schema({
   email: String,
   dateOfBirth: Date,
   phoneNumber: String,
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   faculty: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Faculty',
-  }
+  },
 });
 
 const Lecture = mongoose.model('Lecture', lectureSchema);
