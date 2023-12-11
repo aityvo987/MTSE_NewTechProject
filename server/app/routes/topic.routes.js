@@ -15,4 +15,7 @@ module.exports = function (app) {
   app.get('/api/topics', topicController.getAllTopics);
   app.put('/api/topics/:topicId', topicController.updateTopic);
   app.delete('/api/topics/:topicId', topicController.deleteTopic);
+  app.patch('/api/topics/:topicId/approve', topicController.approvalTopic);
+  app.patch('/api/topics/:topicId/assign', topicController.assignInstructor);
+  app.patch('/api/topics/:topicId/register', topicController.registerTopic);
 };

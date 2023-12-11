@@ -12,6 +12,9 @@ db.student = require("./student.model")
 db.major = require("./major.model")
 db.lecture = require("./lecture.model")
 db.topic = require("./topic.model")
+db.topicPeriod = require("./topicPeriod.model")
+db.topicTask = require("./topicTask.model")
+db.file = require("./file.model")
 
 db.ROLES = ["user", "admin", "moderator"];
 

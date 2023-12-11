@@ -11,6 +11,7 @@ module.exports = {
                 students,
                 faculty,
                 major,
+                topicPeriod,
             } = req.body;
 
             if (students != null) {
@@ -29,13 +30,17 @@ module.exports = {
                 return res.status(400).json({ error: `Invalid majorId ${major}` });
             }
 
+            if (!mongoose.Types.ObjectId.isValid(topicPeriod)) {
+                return res.status(400).json({ error: `Invalid Topic Period ${topicPeriod}` });
+            }
+
             const newTopic = new Topic({
                 topicName,
                 description,
                 students,
                 faculty,
                 major,
-                createAt: new Date(),
+                topicPeriod,
             });
 
             const savedTopic = await newTopic.save();
@@ -50,10 +55,11 @@ module.exports = {
     getAllTopics: async (req, res) => {
         try {
             const topics = await Topic.find()
-                .populate('lecture')
+                .populate('instructor')
                 .populate('students')
                 .populate('faculty')
-                .populate('major');
+                .populate('major')
+                .populate('topicPeriod');
             res.status(200).json(topics);
         } catch (error) {
             console.error(error);
@@ -71,6 +77,7 @@ module.exports = {
                 students,
                 faculty,
                 major,
+                topicPeriod,
             } = req.body;
 
             if (students != null) {
@@ -89,6 +96,10 @@ module.exports = {
                 return res.status(400).json({ error: `Invalid majorId ${major}` });
             }
 
+            if (!mongoose.Types.ObjectId.isValid(topicPeriod)) {
+                return res.status(400).json({ error: `Invalid Topic Period ${topicPeriod}` });
+            }
+
             const updatedTopic = await Topic.findByIdAndUpdate(
                 topicId,
                 {
@@ -97,9 +108,10 @@ module.exports = {
                     students,
                     faculty,
                     major,
+                    topicPeriod,
                 },
                 { new: true }
-            ).populate('students').populate('faculty').populate('major');
+            );
 
             if (!updatedTopic) {
                 return res.status(404).json({ error: 'Topic not found' });
@@ -129,5 +141,91 @@ module.exports = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+
+    approvalTopic: async (req, res) => {
+        try {
+            const { topicId } = req.params;
+            const {
+            } = req.body;
+
+            const updatedTopic = await Topic.findByIdAndUpdate(
+                topicId,
+                {
+                    isApproved: true,
+                },
+                { new: true }
+            );
+
+            if (!updatedTopic) {
+                return res.status(404).json({ error: 'Topic not found' });
+            }
+
+            res.json(updatedTopic);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    assignInstructor: async (req, res) => {
+        try {
+            const { topicId } = req.params;
+            const { instructor } = req.body;
+
+            if (!mongoose.Types.ObjectId.isValid(instructor)) {
+                return res.status(400).json({ error: `Invalid lecture have id: ${instructor}` });
+            }
+
+            const updatedTopic = await Topic.findByIdAndUpdate(
+                topicId,
+                {
+                    instructor
+                },
+                { new: true }
+            ).populate('instructor');
+
+            if (!updatedTopic) {
+                return res.status(404).json({ error: 'Topic not found' });
+            }
+
+            res.json(updatedTopic);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    registerTopic: async (req, res) => {
+        try {
+            const { topicId } = req.params;
+            const { student } = req.body;
+
+            if (!mongoose.Types.ObjectId.isValid(student)) {
+                return res.status(400).json({ error: `Invalid student id: ${student}` });
+            }
+
+            const topic = await Topic.findById(topicId);
+
+            if (!topic) {
+                return res.status(404).json({ error: 'Topic not found' });
+            }
+
+            // Check if adding the student would exceed the limit
+            if (topic.students.length === 2) {
+                return res.status(400).json({ error: 'Maximum 2 students in a topic' });
+            }
+
+            // Add the student to the students array
+            topic.students.push(student);
+
+            // Save the updated topic
+            const updatedTopic = await topic.save();
+
+            res.json(updatedTopic);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
 }
 

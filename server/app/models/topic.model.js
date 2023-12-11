@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const topictSchema = new mongoose.Schema({
+const topicSchema = new mongoose.Schema({
     topicName: String,
     description: String,
     status: Boolean,
@@ -30,11 +30,17 @@ const topictSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Major',
     },
-    startAt: Date,
+    topicPeriod: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'TopicPeriod',
+    },
     score: Number,
-    completeAt: Date,
 });
 
-const Topic = mongoose.model('Topic', topictSchema);
+topicSchema.path('students').validate(function (value) {
+    return value.length <= 2;
+}, 'Maximum 2 students in a topic');
+
+const Topic = mongoose.model('Topic', topicSchema);
 
 module.exports = Topic;
