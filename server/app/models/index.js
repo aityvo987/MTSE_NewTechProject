@@ -15,6 +15,7 @@ db.topic = require("./topic.model")
 db.topicPeriod = require("./topicPeriod.model")
 db.topicTask = require("./topicTask.model")
 db.file = require("./file.model")
+db.notification = require("./notification.model")
 
 db.ROLES = ["user", "admin", "moderator"];
 

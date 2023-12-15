@@ -15,4 +15,7 @@ module.exports = function (app) {
     app.delete('/api/topicTasks/:topicTaskId', topicTaskController.deleteTopicTask);
     app.patch('/api/topicTasks/:topicTaskId/upload-file', fileUploadMiddleware, topicTaskController.uploadTaskFile);
     app.patch('/api/topicTasks/:topicTaskId/comment', topicTaskController.commentTopicTask);
+    app.get('/api/topicTasks/:topicTaskId/get-files', topicTaskController.getAllTopicTaskFile);
+    app.get('/api/topicTasks/download-file/:fileId', fileUploadMiddleware, topicTaskController.downLoadTopicTaskFile);
+    app.delete('/api/topicTasks/:topicTaskId/delete-file/:fileId', topicTaskController.deleteTopicTaskFile);
 };
