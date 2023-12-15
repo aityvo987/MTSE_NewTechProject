@@ -27,7 +27,7 @@ module.exports = {
 
     getAllTopicTasks: async (req, res) => {
         try {
-            const topicTasks = await TopicTask.find().populate('topic').populate('files');
+            const topicTasks = await TopicTask.find();
             res.json(topicTasks);
         } catch (error) {
             console.error(error);
@@ -94,11 +94,9 @@ module.exports = {
     uploadTaskFile: async (req, res) => {
         try {
             const { topicTaskId } = req.params;
-            const { fileName, fileType } = req.body;
-            const content = req.file.buffer;
 
 
-            const newFile = await fileController.addFile(fileName, fileType, content);
+            const newFile = await fileController.addFile(req.file.originalname, req.file.mimetype, req.file.buffer);
 
             if (!newFile) {
                 return res.status(500).json({ error: 'Failed to create a new file' });
@@ -114,9 +112,7 @@ module.exports = {
 
             const updatedTopicTask = await TopicTask.findByIdAndUpdate(
                 topicTaskId,
-                {
-                    files,
-                },
+                { $push: { files: newFile._id } },
                 { new: true }
             );
 
@@ -179,4 +175,67 @@ module.exports = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
+
+    getAllTopicTaskFile: async (req, res) => {
+        try {
+            const { topicTaskId } = req.params;
+
+            if (!topicTaskId) {
+                return res.status(400).json({ error: 'Topic Task ID is required' });
+            }
+
+            const topicTask = await TopicTask.findById(topicTaskId).populate({
+                path: 'files',
+                select: 'fileName fileType',
+            });
+
+            if (!topicTask) {
+                return res.status(404).json({ error: 'Topic task not found' });
+            }
+
+            const files = topicTask.files || [];
+
+            res.json(files);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
+    downLoadTopicTaskFile: async (req, res) => {
+        try {
+            // Extract the fileId from the request parameters
+            const { fileId } = req.params;
+
+            // Return the result of downloadFile
+            return await fileController.downloadFile(fileId, res);
+
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            res.status(500).json({ error: 'Error downloading file' });
+        }
+    },
+
+    deleteTopicTaskFile: async (req, res) => {
+        try {
+            const { topicTaskId, fileId } = req.params;
+
+            const updatedTopicTask = await TopicTask.findByIdAndUpdate(
+                topicTaskId,
+                {
+                    $pull: { files: fileId },
+                },
+                { new: true }
+            );
+
+            if (!updatedTopicTask) {
+                return res.status(404).json({ error: 'Topic task not found' });
+            }
+
+            return await fileController.deleteFile(fileId, res);
+        } catch (error) {
+            console.error('Error deleting file:', error);
+            res.status(500).json({ error: 'Error deleting file' });
+        }
+    }
 };

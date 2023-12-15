@@ -1,5 +1,12 @@
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+
+// Set up Cloudinary configuration (replace with your Cloudinary details)
+cloudinary.config({
+  cloud_name: 'dwjiirpcy',
+  api_key: '956683459234511',
+  api_secret: 'IOTe3vQ6nqbCM_UhnvPWolAjgrw',
+});
 
 // Set up the storage engine
 const storage = multer.memoryStorage(); // Store the file in memory as a Buffer

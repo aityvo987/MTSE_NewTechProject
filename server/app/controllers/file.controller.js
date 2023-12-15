@@ -1,16 +1,8 @@
 const File = require('../models/file.model');
-const fs = require('fs');
 
 module.exports = {
   addFile: async (fileName, fileType, content) => {
     try {
-      // const { fileName, fileType } = req.body;
-      // const content = req.file.buffer;
-
-      if (!fileName || !fileType || !content) {
-        return res.status(400).json({ error: 'File name, type, and content are required' });
-      }
-
       const newFile = await File.create({
         fileName,
         fileType,
@@ -24,10 +16,8 @@ module.exports = {
     }
   },
 
-  getFile: async (req, res) => {
+  downloadFile: async (fileId, res) => {
     try {
-      const { fileId } = req.params;
-
       if (!fileId) {
         return res.status(400).json({ error: 'File ID is required' });
       }
@@ -39,7 +29,6 @@ module.exports = {
       }
       res.setHeader('Content-Type', file.fileType);
       res.setHeader('Content-Disposition', `inline; filename="${file.fileName}"`);
-      // const base64Content = file.content.toString('base64');
       res.send(file.content);
     } catch (error) {
       console.error(error);
@@ -47,10 +36,8 @@ module.exports = {
     }
   },
 
-  deleteFile: async (req, res) => {
+  deleteFile: async (fileId, res) => {
     try {
-      const { fileId } = req.params;
-
       if (!fileId) {
         return res.status(400).json({ error: 'File ID is required' });
       }
