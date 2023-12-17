@@ -1,4 +1,4 @@
-//const { authJwt } = require('../middlewares');
+const { authJwt } = require('../middlewares');
 const facultyController = require('../controllers/faculty.controller');
 
 module.exports = function(app) {
@@ -10,8 +10,8 @@ module.exports = function(app) {
     next();
   });
 
-  app.post('/api/faculties',  facultyController.addFaculty);
-  app.get('/api/faculties',  facultyController.getAllFaculties)
-  app.put('/api/faculties/:facultyId', facultyController.editFaculty);
-  app.delete('/api/faculties/:facultyId', facultyController.deleteFaculty);
+  app.post('/api/faculties', [authJwt.verifyToken, authJwt.isAdmin],  facultyController.addFaculty);
+  app.get('/api/faculties', [authJwt.verifyToken],  facultyController.getAllFaculties)
+  app.put('/api/faculties/:facultyId', [authJwt.verifyToken, authJwt.isAdmin], facultyController.editFaculty);
+  app.delete('/api/faculties/:facultyId', [authJwt.verifyToken, authJwt.isAdmin], facultyController.deleteFaculty);
 };

@@ -1,3 +1,4 @@
+const { authJwt } = require('../middlewares');
 const topicPeriodController = require('../controllers/topicPeriod.controller');
 
 module.exports = function (app) {
@@ -9,8 +10,8 @@ module.exports = function (app) {
     next();
   });
 
-  app.post('/api/topicPeriods', topicPeriodController.addTopicPeriod);
-  app.get('/api/topicPeriods', topicPeriodController.getAllTopicPeriods);
-  app.put('/api/topicPeriods/:topicPeriodId', topicPeriodController.editTopicPeriod);
-  app.delete('/api/topicPeriods/:topicPeriodId', topicPeriodController.deleteTopicPeriod);
+  app.post('/api/topicPeriods', [authJwt.verifyToken, authJwt.isAdmin], topicPeriodController.addTopicPeriod);
+  app.get('/api/topicPeriods', [authJwt.verifyToken], topicPeriodController.getAllTopicPeriods);
+  app.put('/api/topicPeriods/:topicPeriodId', [authJwt.verifyToken, authJwt.isAdmin], topicPeriodController.editTopicPeriod);
+  app.delete('/api/topicPeriods/:topicPeriodId', [authJwt.verifyToken, authJwt.isAdmin], topicPeriodController.deleteTopicPeriod);
 };

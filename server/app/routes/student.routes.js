@@ -1,8 +1,7 @@
-//const { authJwt } = require('../middlewares');
+const { authJwt } = require('../middlewares');
 const studentController = require('../controllers/student.controller');
 
 module.exports = function (app) {
-  // Enable CORS (Cross-Origin Resource Sharing) headers
   app.use(function (req, res, next) {
     res.header(
       'Access-Control-Allow-Headers',
@@ -12,8 +11,8 @@ module.exports = function (app) {
   });
 
   // Define major routes
-  app.post('/api/students', studentController.addStudent);
-  app.get('/api/students', studentController.getAllStudents);
-  app.put('/api/students/:id', studentController.updateStudent);
-  app.patch('/api/students/:id/status', studentController.updateStatusStudent);
+  app.post('/api/students', [authJwt.verifyToken, authJwt.isAdmin], studentController.addStudent);
+  app.get('/api/students', [authJwt.verifyToken], studentController.getAllStudents);
+  app.put('/api/students/:id', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStudent);
+  app.patch('/api/students/:id/status', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStatusStudent);
 };

@@ -13,13 +13,16 @@ exports.signup = (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8)
   });
 
+  console.log(req.body.roles);
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
     }
 
+
     if (req.body.roles) {
+      
       Role.find(
         {
           name: { $in: req.body.roles }
@@ -37,12 +40,14 @@ exports.signup = (req, res) => {
               return;
             }
 
-            res.send({ message: "User was registered successfully!" });
+            roles.map(role => {
+              res.send({ message: `${role.name} was registered successfully!` });
+            })
           });
         }
       );
     } else {
-      Role.findOne({ name: "user" }, (err, role) => {
+      Role.findOne({ name: "Student" }, (err, role) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
@@ -55,7 +60,7 @@ exports.signup = (req, res) => {
             return;
           }
 
-          res.send({ message: "User was registered successfully!" });
+          res.send({ message: "Student was registered successfully!" });
         });
       });
     }

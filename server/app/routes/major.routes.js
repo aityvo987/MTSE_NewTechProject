@@ -1,4 +1,4 @@
-// const { authJwt } = require('../middlewares');
+const { authJwt } = require('../middlewares');
 const majorController = require('../controllers/major.controller');
 
 module.exports = function(app) {
@@ -10,8 +10,8 @@ module.exports = function(app) {
     next();
   });
 
-  app.post('/api/majors', majorController.addMajor);
-  app.get('/api/majors', majorController.getAllMajors);
-  app.put('/api/majors/:majorId', majorController.editMajor);
-  app.delete('/api/majors/:majorId', majorController.deleteMajor);
+  app.post('/api/majors', [authJwt.verifyToken, authJwt.isAdmin], majorController.addMajor);
+  app.get('/api/majors', [authJwt.verifyToken], majorController.getAllMajors);
+  app.put('/api/majors/:majorId', [authJwt.verifyToken, authJwt.isAdmin], majorController.editMajor);
+  app.delete('/api/majors/:majorId', [authJwt.verifyToken, authJwt.isAdmin], majorController.deleteMajor);
 };

@@ -5,7 +5,7 @@ module.exports = {
   // Controller to add a new lecture
   addLecture: async (req, res) => {
     try {
-      const { name, lectureId, email, dateOfBirth, phoneNumber, faculty } = req.body;
+      const { name, lectureId, email, dateOfBirth, phoneNumber, faculty, isFacultyHead } = req.body;
 
       // Validate faculty as a valid ObjectId value
       if (!mongoose.Types.ObjectId.isValid(faculty)) {
@@ -19,6 +19,7 @@ module.exports = {
         dateOfBirth,
         phoneNumber,
         faculty,
+        isFacultyHead,
       });
 
       const savedLecture = await newLecture.save();
@@ -44,7 +45,7 @@ module.exports = {
   updateLecture: async (req, res) => {
     try {
       const { id } = req.params
-      const { lectureId, name, email, dateOfBirth, phoneNumber, faculty } = req.body;
+      const { lectureId, name, email, dateOfBirth, phoneNumber, faculty, isFacultyHead } = req.body;
 
       // var string = `${id}`
       // return res.status(200).json(string)
@@ -63,6 +64,7 @@ module.exports = {
           dateOfBirth,
           phoneNumber,
           faculty,
+          isFacultyHead,
         },
         { new: true }
       );
