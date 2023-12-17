@@ -1,3 +1,4 @@
+const { authJwt } = require('../middlewares');
 const topicTaskController = require('../controllers/topicTask.controller');
 const fileUploadMiddleware = require('../middlewares/fileUpload');
 
@@ -8,14 +9,14 @@ module.exports = function (app) {
         next();
     });
 
-    app.post('/api/topicTasks', topicTaskController.addTopicTask);
-    app.get('/api/topicTasks', topicTaskController.getAllTopicTasks);
-    app.get('/api/topicTasks/:topicTaskId', topicTaskController.getTopicTask);
-    app.put('/api/topicTasks/:topicTaskId', topicTaskController.updateTopicTask);
-    app.delete('/api/topicTasks/:topicTaskId', topicTaskController.deleteTopicTask);
-    app.patch('/api/topicTasks/:topicTaskId/upload-file', fileUploadMiddleware, topicTaskController.uploadTaskFile);
-    app.patch('/api/topicTasks/:topicTaskId/comment', topicTaskController.commentTopicTask);
-    app.get('/api/topicTasks/:topicTaskId/get-files', topicTaskController.getAllTopicTaskFile);
-    app.get('/api/topicTasks/download-file/:fileId', fileUploadMiddleware, topicTaskController.downLoadTopicTaskFile);
-    app.delete('/api/topicTasks/:topicTaskId/delete-file/:fileId', topicTaskController.deleteTopicTaskFile);
+    app.post('/api/topicTasks', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.addTopicTask);
+    app.get('/api/topicTasks', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getAllTopicTasks);
+    app.get('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getTopicTask);
+    app.put('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.updateTopicTask);
+    app.delete('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.deleteTopicTask);
+    app.patch('/api/topicTasks/:topicTaskId/upload-file', [authJwt.verifyToken, authJwt.isStudent], fileUploadMiddleware, topicTaskController.uploadTaskFile);
+    app.patch('/api/topicTasks/:topicTaskId/comment', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.commentTopicTask);
+    app.get('/api/topicTasks/:topicTaskId/get-files', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getAllTopicTaskFile);
+    app.get('/api/topicTasks/download-file/:fileId', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], fileUploadMiddleware, topicTaskController.downLoadTopicTaskFile);
+    app.delete('/api/topicTasks/:topicTaskId/delete-file/:fileId', [authJwt.verifyToken, authJwt.isStudent], topicTaskController.deleteTopicTaskFile);
 };

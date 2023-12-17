@@ -9,10 +9,7 @@ const lectureSchema = new mongoose.Schema({
   email: String,
   dateOfBirth: Date,
   phoneNumber: String,
-  isFacultyChair: {
-    type: Boolean,
-    default: true,
-  },
+  isFacultyHead: Boolean,
   isActive: {
     type: Boolean,
     default: true,

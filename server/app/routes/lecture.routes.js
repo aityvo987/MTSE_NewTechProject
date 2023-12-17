@@ -1,3 +1,4 @@
+const { authJwt } = require('../middlewares');
 const lectureController = require('../controllers/lecture.controller');
 
 module.exports = function (app) {
@@ -11,8 +12,8 @@ module.exports = function (app) {
   });
 
   // Define lecture routes
-  app.post('/api/lectures', lectureController.addLecture);
-  app.get('/api/lectures', lectureController.getAllLectures);
-  app.put('/api/lectures/:id', lectureController.updateLecture);
-  app.patch('/api/lectures/:id/status', lectureController.updateStatusLecture);
+  app.post('/api/lectures', [authJwt.verifyToken, authJwt.isAdmin], lectureController.addLecture);
+  app.get('/api/lectures', [authJwt.verifyToken], lectureController.getAllLectures);
+  app.put('/api/lectures/:id', [authJwt.verifyToken, authJwt.isAdmin], lectureController.updateLecture);
+  app.patch('/api/lectures/:id/status', [authJwt.verifyToken, authJwt.isAdmin], lectureController.updateStatusLecture);
 };

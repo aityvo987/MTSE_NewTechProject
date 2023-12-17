@@ -20,7 +20,7 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isAdmin = (req, res, next) => {
+authorize = (req, res, next, roles) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -31,60 +31,55 @@ isAdmin = (req, res, next) => {
       {
         _id: { $in: user.roles }
       },
-      (err, roles) => {
+      (err, userRoles) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
 
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "admin") {
-            next();
-            return;
-          }
-        }
+        const authorized = roles.some(role => userRoles.some(userRole => userRole.name === role));
 
-        res.status(403).send({ message: "Require Admin Role!" });
-        return;
+        if (authorized) {
+          next();
+        } else {
+          res.status(403).send({ message: `Require one of the roles: ${roles.join(', ')}!` });
+        }
       }
     );
   });
 };
 
-isModerator = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
+isStudent = (req, res, next) => {
+  authorize(req, res, next, ["Student"]);
+}
 
-    Role.find(
-      {
-        _id: { $in: user.roles }
-      },
-      (err, roles) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
+isAdmin = (req, res, next) => {
+  authorize(req, res, next, ["Admin"]);
+};
 
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "moderator") {
-            next();
-            return;
-          }
-        }
+isLecture = (req, res, next) => {
+  authorize(req, res, next, ["Lecture"]);
+};
 
-        res.status(403).send({ message: "Require Moderator Role!" });
-        return;
-      }
-    );
-  });
+isFacultyHead = (req, res, next) => {
+  authorize(req, res, next, ["Faculty Head"]);
+};
+
+isLectureOrFacultyHead = (req, res, next) => {
+  authorize(req, res, next, ["Lecture", "Faculty Head"]);
+};
+
+isStudentOrLectureOrFacultyHead = (req, res, next) => {
+  authorize(req, res, next, ["Student", "Lecture", "Faculty Head"]);
 };
 
 const authJwt = {
   verifyToken,
+  isStudent,
   isAdmin,
-  isModerator
+  isLecture,
+  isFacultyHead,
+  isLectureOrFacultyHead,
+  isStudentOrLectureOrFacultyHead,
 };
 module.exports = authJwt;
