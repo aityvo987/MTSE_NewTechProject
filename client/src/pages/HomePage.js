@@ -1,5 +1,4 @@
 import React from "react";
-import Research from "../components/Research";
 import { DefaultNavBar } from "../components/defaultNavBar.js";
 import Badge from 'react-bootstrap/Badge';
 export default function Homepage() {

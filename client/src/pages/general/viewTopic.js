@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DefaultNavBar } from "../../components/defaultNavBar.js";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
-import { Topic } from "../../models/topic.js";
+import { Topic } from "../../models/sampleTopic.js";
 import { GetTopics } from "../../api/generalAPI.js";
 
 export const ViewTopicPage = () => {
