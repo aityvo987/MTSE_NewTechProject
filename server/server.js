@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require('express-session')
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dbConfig = require("./app/config/db.config");
@@ -37,6 +38,11 @@ db.mongoose
     process.exit();
   });
 
+app.use(session({
+    secret: 'my-secret', // a secret string used to sign the session ID cookie
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false // don't create session until something stored
+}))
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to New Tech application." });
@@ -53,6 +59,7 @@ require("./app/routes/topic.routes")(app);
 require("./app/routes/topicPeriod.routes")(app);
 require("./app/routes/topicTask.routes")(app);
 require("./app/routes/notification.routes")(app);
+require("./app/routes/session.routes")(app);
 // require("./app/routes/file.routes")(app);
 
 // set port, listen for requests

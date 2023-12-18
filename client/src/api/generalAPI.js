@@ -5,7 +5,6 @@ export const GetAllNotifications = async ()=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
         });
         const data = await response.json();
         return data
@@ -22,7 +21,7 @@ export const GetNotification = async (notificationId)=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
+          
         });
         const data = await response.json();
         return data
@@ -39,7 +38,6 @@ export const GetTopics = async ()=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
         });
         const data = await response.json();
         return data
@@ -56,7 +54,6 @@ export const GetLecturers = async ()=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
         });
         const data = await response.json();
         return data
@@ -83,6 +80,66 @@ export const SignIn = async (username,password)=>{
       }
   }
 
+  export const SignOut = async ()=>{
+    try {
+        const response = await fetch('/api/auth/signout', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json()
+        return data
+      }
+      catch (error) {
+        return "Fail"
+      }
+  }
+export const GetUserSession = async ()=>{
+    try {
+        const response = await fetch('/api/session', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json()
+        return data
+      }
+      catch (error) {
+        return "Fail"
+      }
+  }
+  export const GetAllStudents = async ()=>{
+    try {
+        const response = await fetch('/api/students', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json()
+        return data
+      }
+      catch (error) {
+        return "Fail"
+      }
+  }
+  export const GetAllTopicPeriods = async ()=>{
+    try {
+        const response = await fetch('/api/topicPeriods', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json()
+        return data
+      }
+      catch (error) {
+        return "Fail"
+      }
+  }
 
 
 

@@ -13,7 +13,7 @@ module.exports = function (app) {
 
   // Define lecture routes
   app.post('/api/lectures', [authJwt.verifyToken, authJwt.isAdmin], lectureController.addLecture);
-  app.get('/api/lectures', [authJwt.verifyToken], lectureController.getAllLectures);
+  app.get('/api/lectures', lectureController.getAllLectures);
   app.put('/api/lectures/:id', [authJwt.verifyToken, authJwt.isAdmin], lectureController.updateLecture);
   app.patch('/api/lectures/:id/status', [authJwt.verifyToken, authJwt.isAdmin], lectureController.updateStatusLecture);
 };

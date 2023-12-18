@@ -88,7 +88,9 @@ body {
 .admin-dashboard .content{
   flex: 1;
 }
-
+.smaller-table {
+  font-size: 12px; /* Adjust the value as needed */
+}
 
 @keyframes App-logo-spin {
   from {

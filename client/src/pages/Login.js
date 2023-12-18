@@ -17,7 +17,7 @@ export const Login = () => {
         ev.preventDefault()
         SignIn(username,password)
             .then((respone)=>{
-                if (respone.message) console.log(respone.message)
+                respone.signin ? navigate('/') : alert("Sign in information is incorrect")
             })
     }
     useEffect(()=>{

@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom"
-//import { SignOut } from "../api/generalAPI"
+import { SignOut } from "../api/generalAPI"
 import React, { useState } from "react";
 export const NavigationBar = (props) => {
     const navigate = useNavigate()
     const handleSignOut=()=>{
-        // console.log('Sign Out')
-        //SignOut()
+        console.log('Sign Out')
+        SignOut()
         navigate('/')
     }
     
@@ -24,7 +24,6 @@ export const NavigationBar = (props) => {
                 </button>
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel"style={{maxWidth:"300px"}}>
                     <div class="offcanvas-header" style={{backgroundColor:"#b5e2ff"}}>
-                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel" >{props.role}</h5>
                         <h5 class="offcanvas-title" id="offcanvasNavbarLabel" style={{
                             fontStyle: "italic",
                             whiteSpace: "nowrap",
@@ -34,7 +33,7 @@ export const NavigationBar = (props) => {
                             direction: "rtl",
                             textAlign: "left",
                             marginRight:"10px",
-                        }}>  {props.name}</h5>
+                        }}>  {props.user.username}</h5>
                         
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>

@@ -1,15 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { GetAllStudents } from "../../api/adminAPI";
+import { GetUserSession } from "../../api/generalAPI";
 export const ManageStudents = () => {
   const navigate = useNavigate();
-  const [accountsData, setAccountsData] = useState([]);
-  const [sortColumn, setSortColumn] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
   const [isLoading, setIsLoading] = useState(false); 
   const [deleteConfirmation, setDeleteConfirmation] = useState(null); 
   const [showForm, setShowForm] = useState(false);
+  const [editStudent, setEditStudent] = useState(null);
+  const [user, setUser] = useState();
+  const [role, setRole] = useState();
+  const [token, setToken] = useState();
+  const [hasSession, setHasSession] = useState(false);
+  const [students,setStudents]= useState([]);
 
+
+  useEffect(() => {
+    GetUserSession()
+        .then(respone => {
+            if (respone.userinfo !== null && typeof (respone.userinfo) !== 'undefined') {
+              console.log("GetUserSession",respone)
+                setUser(respone.userinfo)
+                setRole(respone.roles)
+                setToken(respone.accessToken)
+                setHasSession(true)
+                GetAllStudents(respone.accessToken)
+                  .then((students) => {
+                    console.log(students);
+                    setStudents(students)
+                    setIsLoading(false);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+            }else {
+              console.log("error");
+            }
+
+        })
+}, [])
 
   const toggleForm = () => {
     setShowForm(!showForm);
@@ -20,8 +49,14 @@ export const ManageStudents = () => {
     // Handle form submission logic here
     // ...
   };
+
+  const handleEdit = (student) => {
+    setEditStudent(student);
+    setShowForm(true);
+  };
   const handleFormCancel = () => {
     setShowForm(false);
+    setEditStudent(null);
     // Reset form fields or perform any necessary cleanup
     // ...
   };
@@ -52,23 +87,43 @@ export const ManageStudents = () => {
                     <label for="floatingPassword">Password</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword2" placeholder="Retype Password" />
+                    <input type="text" class="form-control" id="name" 
+                    placeholder="name student"value={editStudent?editStudent.name:""}
+                    onChange={(e) =>
+                      setEditStudent({ ...editStudent, name: e.target.value })
+                    } />
                     <label for="floatingPassword">Họ và tên</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingPassword3" placeholder="Your Name"  />
+                <input type="text" class="form-control" id="studentId" 
+                    placeholder="name student"value={editStudent?editStudent.studentId:""}
+                    onChange={(e) =>
+                      setEditStudent({ ...editStudent, studentId: e.target.value })
+                    } />
                     <label for="floatingPassword">MSSV</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingPassword3" placeholder="Your Name"  />
+                <input type="text" class="form-control" id="dateOfBirth" 
+                    placeholder="name student"value={editStudent?editStudent.dateOfBirth:""}
+                    onChange={(e) =>
+                      setEditStudent({ ...editStudent, dateOfBirth: e.target.value })
+                    } />
                     <label for="floatingPassword">Ngày sinh</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingPassword3" placeholder="Your Name"  />
+                <input type="text" class="form-control" id="faculty" 
+                    placeholder="name student"value={editStudent?editStudent.faculty:""}
+                    onChange={(e) =>
+                      setEditStudent({ ...editStudent, faculty: e.target.value })
+                    } />
                     <label for="floatingPassword">Khoa</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingPassword3" placeholder="Your Name"  />
+                <input type="text" class="form-control" id="major:" 
+                    placeholder="name student"value={editStudent?editStudent.major[0]:""}
+                    onChange={(e) =>
+                      setEditStudent({ ...editStudent, major: e.target.value })
+                    } />
                     <label for="floatingPassword">Chuyên ngành</label>
                 </div>
                 </form>
@@ -85,7 +140,7 @@ export const ManageStudents = () => {
               </form>
             </div>
           )}
-            <table className="table">
+            <table className="table smaller-table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -102,47 +157,30 @@ export const ManageStudents = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* {sortedAccounts.map((account, index) => (
+                {students.map((account, index) => (
                   <tr key={account._id}>
                     <th scope="row">{index + 1}</th>
-                    <td>
-                      <img src={account.avatar} alt="Avatar" className="avatar-img" style={{objectFit:"cover",width:50,height:50}} />
-                    </td>
-                    <td>{account.username}</td>
+                    <td></td>
+                    <td></td>
                     <td>{account.name}</td>
-                    <td>{account.role}</td>
+                    <td>{account.studentId}</td>
                     <td>{account.email}</td>
-                    <td>{account.createdAt}</td>
+                    <td>{account.dateOfBirth}</td>
+                    <td>{account.phoneNumber}</td>
+                    <td>{account.isActive ? <span>&#10004;</span> : null}</td>
+                    <td>{account.faculty.facultyName}</td>
+                    <td>{account.major[0]}</td>
                     <td>
-                      {deleteConfirmation === account._id ? (
-                        <div className="d-flex align-items-center">
-                          <button
-                            type="button"
-                           className="btn btn-danger btn-sm me-2"
-                            onClick={() => confirmDelete(account._id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-secondary btn-sm"
-                            onClick={cancelDelete}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
+                    <button
                           type="button"
                           className="btn btn-primary btn-sm"
-                          onClick={() => deleteButtonHandler(account._id)}
+                          onClick={() => handleEdit(account)}
                         >
-                          Delete
+                          Edit
                         </button>
-                      )}
                     </td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </div>

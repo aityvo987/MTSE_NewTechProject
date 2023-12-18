@@ -35,8 +35,10 @@ module.exports = {
 
   // Controller to get all students
   getAllStudents: async (req, res) => {
+    console.log("Get All student")
     try {
       const students = await Student.find().populate('faculty').populate('major');
+      console.log("Get All student",students)
       res.status(200).json(students);
     } catch (error) {
       console.error(error);

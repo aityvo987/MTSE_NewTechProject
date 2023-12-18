@@ -16,7 +16,7 @@ export const ViewLecturerPage = () => {
 
   const [sortBy, setSortBy] = useState("default");
   const [searchQuery, setSearchQuery] = useState("");
-  const [lectures,setLectures]= useState("");
+  const [lecturers,setLecturers]= useState("");
 
   const [isLoading, setIsLoading] = useState(true); // Loading state
 
@@ -30,7 +30,7 @@ export const ViewLecturerPage = () => {
     GetLecturers()
         .then(respone => {
             setIsLoading(false)
-            setLectures(respone)
+            setLecturers(respone)
             console.log(respone)
         })
 }, [])
@@ -54,26 +54,8 @@ export const ViewLecturerPage = () => {
               display: "flex",
               flexDirection: "column",
             }}>
+            <h2 style={{ textAlign: "center" }}>Tất cả giảng viên</h2>
             
-            <div>
-                <label htmlFor="sort-by">Sort By:</label>
-                    <select id="sort-by" value={sortBy} onChange={handleSortByChange}>
-                        <option value="createdAt">Recently Created</option>
-                        <option value="updatedAt">Recently Updated</option>
-                        <option value="name">By Alphabet</option>
-                        <option value="level">Level</option>
-                    </select>
-            </div>
-            <div>
-                <label htmlFor="search">Search:</label>
-                    <input
-                        type="text"
-                        id="search"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                        placeholder="Search by lecturer name"
-                    />
-            </div>
 
       </div>
         
@@ -85,7 +67,7 @@ export const ViewLecturerPage = () => {
   </div>
 ) : (
   <div>
-    <h2 style={{ textAlign: "center" }}>Tất cả giảng viên</h2>
+    
     <div
       style={{
         display: "grid",
@@ -96,7 +78,12 @@ export const ViewLecturerPage = () => {
         marginRight: "50px",
       }}
     >
-      <Lecturer lecture={test}></Lecturer>
+      {lecturers.map((lect, index) => (
+                  <div key={lect._id}>
+                    <Lecturer lecture={lect}></Lecturer>
+                  </div>
+                ))}
+      
       
     </div>
   </div>
