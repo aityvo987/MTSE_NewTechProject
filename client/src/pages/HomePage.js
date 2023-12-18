@@ -1,13 +1,15 @@
 import React from "react";
-import Research from "../components/Research";
+import { DefaultNavBar } from "../components/defaultNavBar.js";
 import Badge from 'react-bootstrap/Badge';
 export default function Homepage() {
     return (
+
         <div className="hot-topic-section">
+            <DefaultNavBar></DefaultNavBar>
             <h2>
-                Hot Topic <Badge bg="secondary">New</Badge>
-                </h2>
-            <Research/>
+                Welcome <Badge bg="secondary">User</Badge>
+            </h2>
+            <h3 style={{marginTop:"20%"}}>You can use sidebar for locating</h3>
         </div>
                
     )

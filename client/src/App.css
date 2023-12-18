@@ -3,8 +3,8 @@
 }
 
 .App-content {
-  display: flex;
   align-items: flex-start;
+  margin-bottom: 10%;
 }
 
 .Content-app {
@@ -43,6 +43,52 @@ body {
 .App-link {
   color: #61dafb;
 }
+.sidebar-admin{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 150px;
+  height: 100vh;
+  background-color: #212529;
+}
+.headbar-admin{
+  position: fixed;
+  top: 0;
+  left: 150px; 
+  right: 0;
+  z-index: 1;
+  height:70px;
+  display: flex;
+  align-items: center;
+}
+.container-fluid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.content-admin{
+  margin-top: 100px;
+  margin-left: 200px; 
+  margin-right: 50px;
+  padding-bottom: 100px;
+}
+.sidebar-admin .nav-link.active {
+  display: block;
+  background-color: #0047ab;
+  width: 100%;
+  padding-left: 0; /* Adjust the padding as needed */
+  padding-right: 0; /* Adjust the padding as needed */
+}
+.admin-dashboard {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.admin-dashboard .content{
+  flex: 1;
+}
+
 
 @keyframes App-logo-spin {
   from {

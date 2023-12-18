@@ -7,7 +7,6 @@ export const data = [
         metaDescription:'Microservices With Spring Cloud & OAuth 2 Security',
         authorName:'Faker',
         imageUrl: require('./images/img1.jpg'),
-        wordDocumentUrl: require('./file/research1.docx')
     },
     {
         idresearch:2,

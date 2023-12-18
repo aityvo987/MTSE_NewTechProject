@@ -1,6 +1,5 @@
 import React from "react";
 import { data } from '../data';
-import Research from "../components/Research";
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import DocViewer from "react-doc-viewer";
