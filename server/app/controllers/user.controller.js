@@ -17,3 +17,5 @@ exports.lectureBoard = (req, res) => {
 exports.facultyHeadBoard = (req, res) => {
   res.status(200).send("Faculty Head Content.");
 };
+
+

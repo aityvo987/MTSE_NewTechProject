@@ -12,7 +12,7 @@ module.exports = function (app) {
 
   // Define major routes
   app.post('/api/students', [authJwt.verifyToken, authJwt.isAdmin], studentController.addStudent);
-  app.get('/api/students', [authJwt.verifyToken], studentController.getAllStudents);
+  app.get('/api/students',  studentController.getAllStudents);
   app.put('/api/students/:id', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStudent);
   app.patch('/api/students/:id/status', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStatusStudent);
 };

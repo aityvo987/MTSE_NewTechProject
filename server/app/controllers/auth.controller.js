@@ -103,14 +103,18 @@ exports.signin = (req, res) => {
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
-      res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        roles: authorities,
-        accessToken: token
-      });
+      req.session.userinfo=user._doc;
+      req.session.roles=authorities;
+      req.session.accessToken= token;
+      res.status(200).json({signin:true})
     });
 };
+
+
+exports.signout = (req, res) => {
+  req.session.destroy()
+  res.status(200).json({message:"Signed out"})
+};
+
 
 

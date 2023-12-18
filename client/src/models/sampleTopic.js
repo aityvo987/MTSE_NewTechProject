@@ -3,9 +3,6 @@ import { useNavigate , Link} from "react-router-dom"
 export const Topic = (props) => {
   const navigate = useNavigate()
   const [modalVisible, setModalVisible] = useState(false);
-
-
-  
   const openModal = (event) => {
     setModalVisible(true);
   };
@@ -20,16 +17,16 @@ export const Topic = (props) => {
   return (
     <div className="card-container" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div className="card" id="courseCard" onClick={openModal} style={{ cursor: 'pointer', flex: '1' }}>
-        <img src={props.thumbnail} className="card-img-top" alt="..." style={{height:250,objectFit:'cover'}} />
+        {/* <img src={props.thumbnail} className="card-img-top" alt="..." style={{height:250,objectFit:'cover'}} /> */}
         <div className="card-body">
           <h5 className="card-title" style={{ fontSize: 15, whiteSpace: 'nowrap', overflow: "hidden", textOverflow: 'ellipsis'}} >
-            {props.topicName}
+            {props.data.topicName}
           </h5>
           <p className="card-text">
               <span className="label" style={{display: 'inline-block'}}>Người thực hiện:</span> {props.students}
           </p>
           <p className="card-text">
-              <span className="label"style={{display: 'inline-block'}}>Niên Khoá:</span> {props.topicPeriod}
+              <span className="label"style={{display: 'inline-block'}}>Niên Khoá:</span> {props.data.topicPeriod?props.data.topicPeriod.topicPeriodName:""}
           </p>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Báo cáo chi tiết

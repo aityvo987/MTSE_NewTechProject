@@ -11,7 +11,7 @@ module.exports = function (app) {
   });
 
   app.post('/api/topicPeriods', [authJwt.verifyToken, authJwt.isAdmin], topicPeriodController.addTopicPeriod);
-  app.get('/api/topicPeriods', [authJwt.verifyToken], topicPeriodController.getAllTopicPeriods);
+  app.get('/api/topicPeriods', topicPeriodController.getAllTopicPeriods);
   app.put('/api/topicPeriods/:topicPeriodId', [authJwt.verifyToken, authJwt.isAdmin], topicPeriodController.editTopicPeriod);
   app.delete('/api/topicPeriods/:topicPeriodId', [authJwt.verifyToken, authJwt.isAdmin], topicPeriodController.deleteTopicPeriod);
 };

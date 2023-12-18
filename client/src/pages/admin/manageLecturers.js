@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GetUserSession } from "../../api/generalAPI";
+import { GetAllStudents } from "../../api/adminAPI";
 
 export const ManageLecturers = () => {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState();
+  const [role, setRole] = useState();
+  const [token, setToken] = useState();
+  const [hasSession, setHasSession] = useState(false);
+
+
   const [accountsData, setAccountsData] = useState([]);
   const [sortColumn, setSortColumn] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -27,6 +36,9 @@ export const ManageLecturers = () => {
     // Reset form fields or perform any necessary cleanup
     // ...
   };
+
+
+
   return (
       <div className="content-admin">
         <h1>Danh sách giảng viên</h1>

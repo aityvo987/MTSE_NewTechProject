@@ -5,13 +5,16 @@ import { GetAllNotifications,GetNotification } from '../api/generalAPI';
 export const DefaultNavBar = ()=>{
 
     const [isEmpty,setIsEmpty]= useState(false);
+    const [notifications,setNotifications] = useState([]);
     useEffect(() => {
         GetAllNotifications()
             .then(respone => {
-                // console.log(respone)
+                console.log(respone)
+                setNotifications(respone)
                 if(respone.message){
                   setIsEmpty(true)
                   console.log(respone.message)
+
                 }
             })
     }, [])
@@ -53,13 +56,13 @@ export const DefaultNavBar = ()=>{
                                     {isEmpty ? (
                                     <li><a className="dropdown-item" href="#">No announcement</a></li>
                                     ) : (
-                                    <>
-                                        <li><a className="dropdown-item" href="#">Announcement 1</a></li>
-                                        <li><a className="dropdown-item" href="#">Announcement 2</a></li>
-                                        <li><a className="dropdown-item" href="#">Announcement 3</a></li>
-                                        <li><a className="dropdown-item" href="#">Announcement 4</a></li>
-                                        <li><a className="dropdown-item" href="#">Announcement 5</a></li>
-                                        <li><a className="dropdown-item" href="#">Announcement 6</a></li>
+                                    <>  
+                                        {notifications.map((notify, index) => (
+                                        <div key={index}>
+                                            <li><a className="dropdown-item" href="#">{notify.title} (Date: {notify.lastUpdatedAt.split("T")[0]})</a></li>
+                                        </div>
+                                        ))}
+                                       
                                     </>
                                     )}
                                 </ul>

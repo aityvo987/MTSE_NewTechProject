@@ -50,14 +50,15 @@ export const AddLecturer = async (lectureId, name, email, dateOfBirth, phoneNumb
 
 //Students
 
-export const GetAllStudents = async ()=>{
+export const GetAllStudents = async (accessToken)=>{
     try {
+      console.log("Admin API",accessToken);
         const response = await fetch(`/api/students`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ })
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
+          }
         });
         const data = await response.json();
         return data
