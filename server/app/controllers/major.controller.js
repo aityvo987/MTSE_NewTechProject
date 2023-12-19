@@ -30,13 +30,31 @@ module.exports = {
     }
   },
 
+  getMajorDetail: async (req, res) => {
+    try {
+      const { majorId } = req.params;
+
+      if (!majorId) {
+        return res.status(400).json({ error: 'Major ID is required' });
+      }
+
+      const foundMajor = await Major.findById(majorId);
+
+      if (!foundMajor) {
+        return res.status(404).json({ error: 'Major not found' });
+      }
+
+      res.json(foundMajor);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
   editMajor: async (req, res) => {
     try {
       const { majorId } = req.params;
       const { majorName } = req.body;
-
-      // var string = `${majorId} + ${majorName}`
-      // return res.status(200).json(string)
 
       if (!majorId || !majorName) {
         return res.status(400).json({ error: 'Major ID and new Major Name are required' });
@@ -79,4 +97,6 @@ module.exports = {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+
+  
 };

@@ -12,6 +12,7 @@ module.exports = function(app) {
 
   app.post('/api/majors', [authJwt.verifyToken, authJwt.isAdmin], majorController.addMajor);
   app.get('/api/majors', [authJwt.verifyToken], majorController.getAllMajors);
+  app.get('/api/majors/:majorId', [authJwt.verifyToken], majorController.getMajorDetail);
   app.put('/api/majors/:majorId', [authJwt.verifyToken, authJwt.isAdmin], majorController.editMajor);
   app.delete('/api/majors/:majorId', [authJwt.verifyToken, authJwt.isAdmin], majorController.deleteMajor);
 };

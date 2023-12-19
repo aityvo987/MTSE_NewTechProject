@@ -12,6 +12,7 @@ module.exports = function(app) {
 
   app.post('/api/faculties', [authJwt.verifyToken, authJwt.isAdmin],  facultyController.addFaculty);
   app.get('/api/faculties', [authJwt.verifyToken],  facultyController.getAllFaculties)
+  app.get('/api/faculties/:facultyId', [authJwt.verifyToken],  facultyController.getFacultyDetail)
   app.put('/api/faculties/:facultyId', [authJwt.verifyToken, authJwt.isAdmin], facultyController.editFaculty);
   app.delete('/api/faculties/:facultyId', [authJwt.verifyToken, authJwt.isAdmin], facultyController.deleteFaculty);
 };

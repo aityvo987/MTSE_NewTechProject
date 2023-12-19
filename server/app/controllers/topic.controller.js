@@ -69,32 +69,32 @@ module.exports = {
 
     getTopicDetail: async (req, res) => {
         try {
-          const { topicId } = req.params;
-    
-          // Validate the topicId
-          if (!mongoose.Types.ObjectId.isValid(topicId)) {
-            return res.status(400).json({ error: `Invalid topicId: ${topicId}` });
-          }
-    
-          // Find the topic by ID and populate the related fields
-          const topic = await Topic.findById(topicId)
-            .populate('instructor')
-            .populate('students')
-            .populate('faculty')
-            .populate('major')
-            .populate('topicPeriod');
-    
-          // Check if the topic exists
-          if (!topic) {
-            return res.status(404).json({ error: 'Topic not found' });
-          }
-    
-          res.status(200).json(topic);
+            const { topicId } = req.params;
+
+            // Validate the topicId
+            if (!mongoose.Types.ObjectId.isValid(topicId)) {
+                return res.status(400).json({ error: `Invalid topicId: ${topicId}` });
+            }
+
+            // Find the topic by ID and populate the related fields
+            const topic = await Topic.findById(topicId)
+                .populate('instructor')
+                .populate('students')
+                .populate('faculty')
+                .populate('major')
+                .populate('topicPeriod');
+
+            // Check if the topic exists
+            if (!topic) {
+                return res.status(404).json({ error: 'Topic not found' });
+            }
+
+            res.status(200).json(topic);
         } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: 'Internal Server Error' });
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
-      },
+    },
 
     // Controller to update a topic
     updateTopic: async (req, res) => {

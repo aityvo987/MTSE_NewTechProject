@@ -46,6 +46,27 @@ module.exports = {
     }
   },
 
+  getStudentDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid student ObjectId' });
+      }
+
+      const foundStudent = await Student.findById(id).populate('faculty').populate('major');
+
+      if (!foundStudent) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      res.json(foundStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
   // Controller to update student (excluding isActive)
   updateStudent: async (req, res) => {
     try {

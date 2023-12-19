@@ -35,7 +35,7 @@ module.exports = {
         }
     },
 
-    getTopicTask: async (req, res) => {
+    getTopicTaskDetail: async (req, res) => {
         try {
             const { topicTaskId } = req.params;
 
