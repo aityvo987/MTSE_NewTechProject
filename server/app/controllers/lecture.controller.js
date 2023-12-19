@@ -41,6 +41,27 @@ module.exports = {
     }
   },
 
+  getLectureDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid lecture ObjectId' });
+      }
+
+      const foundLecture = await Lecture.findById(id);
+
+      if (!foundLecture) {
+        return res.status(404).json({ error: 'Lecture not found' });
+      }
+
+      res.json(foundLecture);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
   // Controller to update all properties except isActive
   updateLecture: async (req, res) => {
     try {

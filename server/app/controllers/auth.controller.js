@@ -22,7 +22,7 @@ exports.signup = (req, res) => {
 
 
     if (req.body.roles) {
-      
+
       Role.find(
         {
           name: { $in: req.body.roles }
@@ -103,17 +103,17 @@ exports.signin = (req, res) => {
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
-      req.session.userinfo=user._doc;
-      req.session.roles=authorities;
-      req.session.accessToken= token;
-      res.status(200).json({signin:true})
+      req.session.userinfo = user._doc;
+      req.session.roles = authorities;
+      req.session.accessToken = token;
+      res.status(200).json({ signin: true })
     });
 };
 
 
 exports.signout = (req, res) => {
   req.session.destroy()
-  res.status(200).json({message:"Signed out"})
+  res.status(200).json({ message: "Signed out" })
 };
 
 

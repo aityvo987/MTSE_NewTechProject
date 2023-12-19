@@ -11,7 +11,7 @@ module.exports = function (app) {
 
     app.post('/api/topicTasks', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.addTopicTask);
     app.get('/api/topicTasks', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getAllTopicTasks);
-    app.get('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getTopicTask);
+    app.get('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getTopicTaskDetail);
     app.put('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.updateTopicTask);
     app.delete('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.deleteTopicTask);
     app.patch('/api/topicTasks/:topicTaskId/upload-file', [authJwt.verifyToken, authJwt.isStudent], fileUploadMiddleware, topicTaskController.uploadTaskFile);
