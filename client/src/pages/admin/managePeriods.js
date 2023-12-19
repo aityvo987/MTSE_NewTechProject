@@ -1,28 +1,133 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { GetAllTopicPeriods, AddTopicPeriod,UpdateTopicPeriod,DeleteTopicPeriod} from "../../api/adminAPI";
+import { GetUserSession } from "../../api/generalAPI";
 export const ManagePeriods = () => {
   const navigate = useNavigate();
-  const [accountsData, setAccountsData] = useState([]);
-  const [sortColumn, setSortColumn] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [isLoading, setIsLoading] = useState(false); 
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
+  const [deletePeriod, setDeletePeriod] = useState(null); 
   const [showForm, setShowForm] = useState(false);
+  const [editPeriod, setEditPeriod] = useState(null);
+  const [user, setUser] = useState();
+  const [role, setRole] = useState();
+  const [token, setToken] = useState();
+  const [hasSession, setHasSession] = useState(false);
+  
+  const [periods,setPeriods]= useState([]);
+  const [isCreate, setIsCreate]= useState(true); 
 
+
+  useEffect(() => {
+    GetUserSession()
+      .then((response) => {
+        if (response.userinfo !== null && typeof response.userinfo !== "undefined") {
+          console.log("GetUserSession", response);
+          setUser(response.userinfo);
+          setRole(response.roles);
+          setToken(response.accessToken);
+          setHasSession(true);
+          
+          GetAllTopicPeriods(response.accessToken)
+            .then((periods) => {
+              setPeriods(periods);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log("error");
+        }
+      });
+  }, []);
+  
   const toggleForm = () => {
     setShowForm(!showForm);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit =async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    // ...
+    
+    if (isCreate){
+      console.log("Create period",editPeriod);
+      if (!editPeriod.topicPeriodName || !editPeriod.startDate || !editPeriod.dueDate ) {
+       window.alert('Please fill in all required fields.');
+       return;
+     }
+     
+     AddTopicPeriod(token, editPeriod.topicPeriodName, editPeriod.startDate,editPeriod.dueDate )
+       .then((response) => {
+         if (response.status === 201) {
+           alert("Period created");
+           window.location.reload();
+         } else {
+           alert("Error creating period");
+         }
+       })
+       .catch((error) => {
+         console.error("Error:", error);
+         alert("Internal error, please try again sometime later");
+       });
+    }
+    else {
+      console.log("Update period",editPeriod);
+      if (!editPeriod.topicPeriodName || !editPeriod.startDate || !editPeriod.dueDate ) {
+        window.alert('Please fill in all required fields.');
+        return;
+      }
+     UpdateTopicPeriod(token,editPeriod._id, editPeriod.topicPeriodName, editPeriod.startDate,editPeriod.dueDate )
+      .then((response) => {
+        console.log("Update",response);
+        if (response.status === 201) {
+          alert("Period updated");
+          window.location.reload();
+        } else if (response.status === 404) {
+          alert("Can't find period");
+        } else {
+          alert("Internal error");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Internal error, please try again sometime later");
+      });
+    }
+    
+  };
+
+  const handleEdit = (student) => {
+    setEditPeriod(student);
+    setIsCreate(false);
+    setShowForm(true);
+  };
+  const handleDelete = (student) => {
+    setDeletePeriod(student);
+  };
+
+  const confirmDelete = () => {
+    if (deletePeriod) {
+      console.log("Deleting", deletePeriod._id);
+      DeleteTopicPeriod(token, deletePeriod._id)
+        .then((response) => {
+          console.log("Delete", response);
+          if (response.status === 201) {
+            alert("Period deleted");
+          } else {
+            alert(response.message);
+          }
+        })
+        .finally(() => {
+          setDeletePeriod(null);
+        });
+    }
+  };
+  const cancelDelete = () => {
+    setDeletePeriod(null);
   };
   const handleFormCancel = () => {
     setShowForm(false);
-    // Reset form fields or perform any necessary cleanup
-    // ...
+    setEditPeriod(null);
+    setIsCreate(true);
   };
   
   return (
@@ -35,27 +140,59 @@ export const ManagePeriods = () => {
           </div>
         ) : (
           <div className="content">
-           
+            
             <button type="button" className="btn btn-primary btn-sm" onClick={toggleForm}>
                     Thêm
-                  </button>
+            </button>
+            {deletePeriod && (
+              <div className="confirmation-dialog">
+                <p>Are you sure you want to delete this period?</p>
+                <button className="btn btn-danger" onClick={confirmDelete}>
+                  Yes
+                </button>
+                <button className="btn btn-secondary" onClick={cancelDelete}>
+                  No
+                </button>
+              </div>
+            )}      
             {showForm && (
             <div className="form-edit">
               <form onSubmit={handleFormSubmit}>
-              <form>
+              <form className="content-form" style={{marginBottom:"50px"}}>
                 <div class="form-floating mb-3">
-                    <input type='text' class="form-control" id="floatingInput0" placeholder="username" />
-                    <label for="floatingInput">Tên đợt</label>
+                    <input type="text" class="form-control" id="name" 
+                    placeholder="name student"value={editPeriod?editPeriod.topicPeriodName:""}
+                    onChange={(e) =>
+                      setEditPeriod({ ...editPeriod, topicPeriodName: e.target.value })
+                    } />
+                    <label for="floatingPassword">Tên đợt</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword1" placeholder="Password" />
-                    <label for="floatingPassword">Ngày bắt đầu</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="startDate"
+                    placeholder="name student"
+                    value={editPeriod ? editPeriod.startDate : ""}
+                    onChange={(e) =>
+                      setEditPeriod({ ...editPeriod, startDate: e.target.value })
+                    }
+                  />
+                  <label for="floatingPassword">Ngày bắt đầu</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword2" placeholder="Retype Password" />
-                    <label for="floatingPassword">Ngày kết thúc</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="dueDate"
+                    placeholder="name student"
+                    value={editPeriod ? editPeriod.dueDate : ""}
+                    onChange={(e) =>
+                      setEditPeriod({ ...editPeriod, dueDate: e.target.value })
+                    }
+                  />
+                  <label for="floatingPassword">Ngày kết thúc</label>
                 </div>
-                
                 </form>
                 <button
                   type="button"
@@ -70,7 +207,7 @@ export const ManagePeriods = () => {
               </form>
             </div>
           )}
-            <table className="table">
+            <table className="table smaller-table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -80,51 +217,35 @@ export const ManagePeriods = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* {sortedAccounts.map((account, index) => (
-                  <tr key={account._id}>
+                {periods.map((period, index) => (
+                  <tr key={period._id}>
                     <th scope="row">{index + 1}</th>
+                    <td>{period.topicPeriodName}</td>
+                    <td>{period.startDate}</td>
+                    <td>{period.dueDate}</td>
                     <td>
-                      <img src={account.avatar} alt="Avatar" className="avatar-img" style={{objectFit:"cover",width:50,height:50}} />
-                    </td>
-                    <td>{account.username}</td>
-                    <td>{account.name}</td>
-                    <td>{account.role}</td>
-                    <td>{account.email}</td>
-                    <td>{account.createdAt}</td>
-                    <td>
-                      {deleteConfirmation === account._id ? (
-                        <div className="d-flex align-items-center">
-                          <button
-                            type="button"
-                           className="btn btn-danger btn-sm me-2"
-                            onClick={() => confirmDelete(account._id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-secondary btn-sm"
-                            onClick={cancelDelete}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
+                    <button
                           type="button"
                           className="btn btn-primary btn-sm"
-                          onClick={() => deleteButtonHandler(account._id)}
+                          onClick={() => handleEdit(period)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-warning btn-sm"
+                          onClick={() => handleDelete(period)}
                         >
                           Delete
                         </button>
-                      )}
                     </td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </div>
         )}
+        
       </div>
   );
 };

@@ -1,29 +1,133 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { GetAllMajors, AddMajor,UpdateMajor,DeletMajor} from "../../api/adminAPI";
+import { GetUserSession } from "../../api/generalAPI";
 export const ManageMajors = () => {
   const navigate = useNavigate();
-  const [accountsData, setAccountsData] = useState([]);
-  const [sortColumn, setSortColumn] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [isLoading, setIsLoading] = useState(false); 
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
+  const [deleteMajor, setDeleteMajor] = useState(null); 
   const [showForm, setShowForm] = useState(false);
+  const [editMajor, setEditMajor] = useState(null);
+  const [user, setUser] = useState();
+  const [role, setRole] = useState();
+  const [token, setToken] = useState();
+  const [hasSession, setHasSession] = useState(false);
   
+  const [majors,setMajors]= useState([]);
+  const [isCreate, setIsCreate]= useState(true); 
 
+
+  useEffect(() => {
+    GetUserSession()
+      .then((response) => {
+        if (response.userinfo !== null && typeof response.userinfo !== "undefined") {
+          console.log("GetUserSession", response);
+          setUser(response.userinfo);
+          setRole(response.roles);
+          setToken(response.accessToken);
+          setHasSession(true);
+          
+          GetAllMajors(response.accessToken)
+            .then((majors) => {
+              setMajors(majors);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log("error");
+        }
+      });
+  }, []);
+  
   const toggleForm = () => {
     setShowForm(!showForm);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit =async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    // ...
+    
+    if (isCreate){
+      console.log("Create period",editMajor);
+      if (!editMajor.majorName  ) {
+       window.alert('Please fill in required field.');
+       return;
+     }
+     
+     AddMajor(token, editMajor.majorName)
+       .then((response) => {
+         if (response.status === 201) {
+           alert("Major created");
+           window.location.reload();
+         } else {
+           alert("Error creating major");
+         }
+       })
+       .catch((error) => {
+         console.error("Error:", error);
+         alert("Internal error, please try again sometime later");
+       });
+    }
+    else {
+      console.log("Update major",editMajor);
+      if (!editMajor.majorName ) {
+        window.alert('Please fill in required field.');
+        return;
+      }
+     UpdateMajor(token,editMajor._id, editMajor.majorName)
+      .then((response) => {
+        console.log("Update",response);
+        if (response.status === 201) {
+          alert("Major updated");
+          window.location.reload();
+        } else if (response.status === 404) {
+          alert("Can't find major");
+        } else {
+          alert("Internal error");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Internal error, please try again sometime later");
+      });
+    }
+    
+  };
+
+  const handleEdit = (major) => {
+    setEditMajor(major);
+    setIsCreate(false);
+    setShowForm(true);
+  };
+  const handleDelete = (major) => {
+    setDeleteMajor(major);
+  };
+
+  const confirmDelete = () => {
+    if (deleteMajor) {
+      console.log("Deleting", deleteMajor._id);
+      DeletMajor(token, deleteMajor._id)
+        .then((response) => {
+          console.log("Delete", response);
+          if (response.status === 201) {
+            alert("Major deleted");
+          } else {
+            alert(response.message);
+          }
+        })
+        .finally(() => {
+          setDeleteMajor(null);
+        });
+    }
+  };
+  const cancelDelete = () => {
+    setDeleteMajor(null);
   };
   const handleFormCancel = () => {
     setShowForm(false);
-    // Reset form fields or perform any necessary cleanup
-    // ...
+    setDeleteMajor(null);
+    setIsCreate(true);
   };
   
   return (
@@ -36,21 +140,34 @@ export const ManageMajors = () => {
           </div>
         ) : (
           <div className="content">
-
+            
             <button type="button" className="btn btn-primary btn-sm" onClick={toggleForm}>
                     Thêm
-                  </button>
+            </button>
+            {deleteMajor && (
+              <div className="confirmation-dialog">
+                <p>Are you sure you want to delete this major?</p>
+                <button className="btn btn-danger" onClick={confirmDelete}>
+                  Yes
+                </button>
+                <button className="btn btn-secondary" onClick={cancelDelete}>
+                  No
+                </button>
+              </div>
+            )}      
             {showForm && (
             <div className="form-edit">
               <form onSubmit={handleFormSubmit}>
-              <form>
+              <form className="content-form" style={{marginBottom:"50px"}}>
                 <div class="form-floating mb-3">
-                    <input type='text' class="form-control" id="floatingInput0" placeholder="username" />
-                    <label for="floatingInput">Tên chuyên ngành</label>
+                    <input type="text" class="form-control" id="name" 
+                    placeholder="name student"value={editMajor?editMajor.majorName:""}
+                    onChange={(e) =>
+                      setEditMajor({ ...editMajor, majorName: e.target.value })
+                    } />
+                    <label for="floatingPassword">Tên chuyên ngành</label>
                 </div>
-                
-                
-              </form>
+                </form>
                 <button
                   type="button"
                   className="btn btn-secondary"
@@ -64,7 +181,7 @@ export const ManageMajors = () => {
               </form>
             </div>
           )}
-            <table className="table">
+            <table className="table smaller-table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -72,51 +189,33 @@ export const ManageMajors = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* {sortedAccounts.map((account, index) => (
-                  <tr key={account._id}>
+                {majors.map((major, index) => (
+                  <tr key={major._id}>
                     <th scope="row">{index + 1}</th>
+                    <td>{major.majorName}</td>
                     <td>
-                      <img src={account.avatar} alt="Avatar" className="avatar-img" style={{objectFit:"cover",width:50,height:50}} />
-                    </td>
-                    <td>{account.username}</td>
-                    <td>{account.name}</td>
-                    <td>{account.role}</td>
-                    <td>{account.email}</td>
-                    <td>{account.createdAt}</td>
-                    <td>
-                      {deleteConfirmation === account._id ? (
-                        <div className="d-flex align-items-center">
-                          <button
-                            type="button"
-                           className="btn btn-danger btn-sm me-2"
-                            onClick={() => confirmDelete(account._id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-secondary btn-sm"
-                            onClick={cancelDelete}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
+                    <button
                           type="button"
                           className="btn btn-primary btn-sm"
-                          onClick={() => deleteButtonHandler(account._id)}
+                          onClick={() => handleEdit(major)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-warning btn-sm"
+                          onClick={() => handleDelete(major)}
                         >
                           Delete
                         </button>
-                      )}
                     </td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </div>
         )}
+        
       </div>
   );
 };
