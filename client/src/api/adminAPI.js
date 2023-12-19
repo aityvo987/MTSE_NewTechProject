@@ -1,3 +1,39 @@
+export const AddAccount = async (accessToken,username, email, password)=>{
+  try {
+      const response = await fetch(`/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({username, email, password})
+      });
+      const data =  response;
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+
+
+export const GetAllAccounts = async (accessToken)=>{
+  try {
+      const response = await fetch(`/api/accounts`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+
 export const GetAllLecturers = async ()=>{
     try {
         const response = await fetch(`/api/lectures`, {
@@ -5,7 +41,6 @@ export const GetAllLecturers = async ()=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
         });
         const data = await response.json();
         return data
@@ -67,32 +102,50 @@ export const GetAllStudents = async (accessToken)=>{
         return { message: 'Fail' };
       }
   }
-export const UpdateStudent = async (id,name, studentId, email, dateOfBirth, phoneNumber, faculty, major )=>{
+export const UpdateStudent = async (accessToken,id,name, studentId, email, dateOfBirth, phoneNumber, faculty, major )=>{
     try {
         const response = await fetch(`/api/students/${id}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({name, studentId, email, dateOfBirth, phoneNumber, faculty, major  })
         });
-        const data = await response.json();
+        const data = response;
         return data
       }
       catch (error) {
         return { message: 'Fail' };
       }
   }
-export const AddStudent = async (name, studentId, email, dateOfBirth, phoneNumber, faculty, major )=>{
+export const AddStudent = async (accessToken,name, studentId, email, dateOfBirth, phoneNumber, faculty, major )=>{
     try {
         const response = await fetch(`/api/students/`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({name, studentId, email, dateOfBirth, phoneNumber, faculty, major  })
         });
-        const data = await response.json();
+        const data =  response;
+        return data
+      }
+      catch (error) {
+        return { message: 'Fail' };
+      }
+  }
+  export const DeleteStudent = async (accessToken,id )=>{
+    try {
+        const response = await fetch(`/api/students/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
+          },
+        });
+        const data = response;
         return data
       }
       catch (error) {
@@ -110,7 +163,6 @@ export const GetAllTopics = async ()=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
         });
         const data = await response.json();
         return data
@@ -214,7 +266,6 @@ export const AssignStudentTopic = async (topicId,student )=>{
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ })
         });
         const data = await response.json();
         return data
@@ -273,14 +324,14 @@ export const DeleteTopicPeriod = async (topicId )=>{
   }
 // Falcuty
 
-export const GetAllFaculties = async ()=>{
+export const GetAllFaculties = async (accessToken)=>{
   try {
       const response = await fetch(`/api/faculties`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
         },
-        body: JSON.stringify({ })
       });
       const data = await response.json();
       return data
@@ -327,6 +378,76 @@ export const DeleteFalcuty = async (facultyId )=>{
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({  })
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+
+//Major 
+
+export const GetAllMajors = async (accessToken)=>{
+  try {
+      const response = await fetch(`/api/majors`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const UpdateMajor = async (accessToken,majorId,majorName )=>{
+  try {
+      const response = await fetch(`/api/majors/${majorId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({majorName  })
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const AddMajor = async (accessToken,facultyName)=>{
+  try {
+      const response = await fetch(`/api/majors/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({facultyName })
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const DeletMajor = async (accessToken,facultyId )=>{
+  try {
+      const response = await fetch(`/api/majors/${facultyId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
         },
         body: JSON.stringify({  })
       });

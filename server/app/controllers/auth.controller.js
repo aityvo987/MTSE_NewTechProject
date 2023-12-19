@@ -2,6 +2,8 @@ const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
+const Student = db.student;
+const Lecture = db.lecture;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -60,7 +62,7 @@ exports.signup = (req, res) => {
             return;
           }
 
-          res.send({ message: "Student was registered successfully!" });
+          res.status(201).send({ message: "Student was registered successfully!" });
         });
       });
     }
@@ -103,7 +105,19 @@ exports.signin = (req, res) => {
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
-      req.session.userinfo=user._doc;
+
+      if (authorities.includes("ROLE_STUDENT")){
+        const student = Student.findOne({email:user.email});
+        req.session.userinfo = student._doc;
+      }
+      else if (authorities.includes("ROLE_LECTURE")){
+        const lecture = Lecture.findOne({email:user.email});
+        req.session.userinfo = lecture._doc;
+      }
+      else {
+        req.session.userinfo="ADMIN";
+      }
+      req.session.useraccount=user._doc;
       req.session.roles=authorities;
       req.session.accessToken= token;
       res.status(200).json({signin:true})

@@ -15,4 +15,5 @@ module.exports = function (app) {
   app.get('/api/students',  studentController.getAllStudents);
   app.put('/api/students/:id', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStudent);
   app.patch('/api/students/:id/status', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStatusStudent);
+  app.delete('/api/students/:id', [authJwt.verifyToken, authJwt.isAdmin], studentController.deleteStudent);
 };

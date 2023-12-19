@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetAllStudents } from "../../api/adminAPI";
+import { GetAllStudents, GetAllAccounts,GetAllFaculties ,AddStudent, GetAllMajors,AddAccount,UpdateStudent,DeleteStudent} from "../../api/adminAPI";
 import { GetUserSession } from "../../api/generalAPI";
 export const ManageStudents = () => {
   const navigate = useNavigate();
@@ -12,53 +12,147 @@ export const ManageStudents = () => {
   const [role, setRole] = useState();
   const [token, setToken] = useState();
   const [hasSession, setHasSession] = useState(false);
+  
   const [students,setStudents]= useState([]);
+  const [faculties, setFaculties] = useState([]);
+  const [majors, setMajors] = useState([]);
+  const [isCreate, setIsCreate]= useState(true); 
+  const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [selectedMajor, setSelectedMajor] = useState(null);
 
 
   useEffect(() => {
     GetUserSession()
-        .then(respone => {
-            if (respone.userinfo !== null && typeof (respone.userinfo) !== 'undefined') {
-              console.log("GetUserSession",respone)
-                setUser(respone.userinfo)
-                setRole(respone.roles)
-                setToken(respone.accessToken)
-                setHasSession(true)
-                GetAllStudents(respone.accessToken)
-                  .then((students) => {
-                    console.log(students);
-                    setStudents(students)
-                    setIsLoading(false);
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-            }else {
-              console.log("error");
-            }
-
-        })
-}, [])
-
+      .then((response) => {
+        if (response.userinfo !== null && typeof response.userinfo !== "undefined") {
+          console.log("GetUserSession", response);
+          setUser(response.userinfo);
+          setRole(response.roles);
+          setToken(response.accessToken);
+          setHasSession(true);
+          
+          Promise.all([GetAllStudents(response.accessToken), GetAllAccounts(response.accessToken),GetAllFaculties(response.accessToken)
+            ,GetAllMajors(response.accessToken)])
+            .then(([students, accounts, faculties,majors]) => {
+              console.log(faculties);
+              const updatedStudents = students.map((student) => {
+                const account = accounts.find((acc) => acc.email === student.email);
+                if (account) {
+                  return {
+                    ...student,
+                    username: account.username,
+                  };
+                }
+                return student;
+              });
+              setStudents(updatedStudents);
+              setIsLoading(false);
+              setFaculties(faculties);
+              setMajors(majors);
+            })
+            .catch((error) => {
+              console.log(error);
+              setIsLoading(false);
+            });
+        } else {
+          console.log("error");
+        }
+      });
+  }, []);
+  
   const toggleForm = () => {
     setShowForm(!showForm);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit =async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    // ...
+    
+    if (isCreate){
+      console.log("Create student",editStudent);
+      if (!editStudent.name || !editStudent.studentId || !editStudent.dateOfBirth || !editStudent.email||
+        !editStudent.faculty|| !editStudent.major) {
+       window.alert('Please fill in all required fields.');
+       return;
+     }
+     
+     Promise.all([
+       AddAccount(token, editStudent.email, editStudent.email, "123456","Student"),
+       AddStudent(token, editStudent.name, editStudent.studentId, editStudent.email, editStudent.dateOfBirth, "", editStudent.faculty, editStudent.major)
+     ])
+       .then(([accountData, studentData]) => {
+         if (accountData.status === 201 && studentData.status === 201) {
+           alert("Account and student created");
+           window.location.reload();
+         } else {
+           alert("Error creating account or student");
+         }
+       })
+       .catch((error) => {
+         console.error("Error:", error);
+         alert("Internal error, please try again sometime later");
+       });
+    }
+    else {
+      console.log("Update student",editStudent);
+      if (!editStudent.name || !editStudent.studentId || !editStudent.dateOfBirth || !editStudent.email||
+        !editStudent.faculty|| !editStudent.major) {
+       window.alert('Please fill in all required fields.');
+       return;
+     }
+     UpdateStudent(token, editStudent._id, editStudent.name, editStudent.studentId, editStudent.email, editStudent.dateOfBirth, editStudent.phoneNumber, editStudent.faculty, editStudent.major)
+      .then((response) => {
+        console.log("Update",response);
+        if (response.status === 201) {
+          alert("Student updated");
+          window.location.reload();
+        } else if (response.status === 404) {
+          alert("Can't find student");
+        } else {
+          alert("Internal error");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Internal error, please try again sometime later");
+      });
+    }
+    
   };
 
   const handleEdit = (student) => {
     setEditStudent(student);
+    setIsCreate(false);
     setShowForm(true);
+  };
+
+  const handleDelete = (student) => {
+    console.log("Deleting",student._id);
+    DeleteStudent(token,student._id).then(response=>{
+      console.log("Delete",response);
+      if (response.status===201){
+        alert("Student deleted");
+      }
+      else {
+        alert(response.message);
+      }
+  });
   };
   const handleFormCancel = () => {
     setShowForm(false);
     setEditStudent(null);
-    // Reset form fields or perform any necessary cleanup
-    // ...
+    setIsCreate(true);
+  };
+  const handleFacultyChange = (event) => {
+    const selectedFaculty = event.target.value;
+    setSelectedFaculty(selectedFaculty);
+    const selectedFacultyData = faculties.find(faculty => faculty.facultyName === selectedFaculty);
+    setEditStudent({ ...editStudent, faculty: selectedFacultyData });
+  };
+  const handleMajorChange = (event) => {
+    const selectedMajor = event.target.value;
+    setSelectedMajor(selectedMajor);
+    const selectedMajorData = majors.find(major => major.majorName === selectedMajor);
+    setEditStudent({ ...editStudent, major: selectedMajorData });
   };
   return (
       <div className="content-admin">
@@ -77,15 +171,7 @@ export const ManageStudents = () => {
             {showForm && (
             <div className="form-edit">
               <form onSubmit={handleFormSubmit}>
-              <form>
-                <div class="form-floating mb-3">
-                    <input type='text' class="form-control" id="floatingInput0" placeholder="username" />
-                    <label for="floatingInput">Username</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword1" placeholder="Password" />
-                    <label for="floatingPassword">Password</label>
-                </div>
+              <form className="content-form" style={{marginBottom:"50px"}}>
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="name" 
                     placeholder="name student"value={editStudent?editStudent.name:""}
@@ -111,21 +197,32 @@ export const ManageStudents = () => {
                     <label for="floatingPassword">Ngày sinh</label>
                 </div>
                 <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="faculty" 
-                    placeholder="name student"value={editStudent?editStudent.faculty:""}
+                <input type="text" class="form-control" id="email" 
+                    placeholder="name student"value={editStudent?editStudent.email:""}
                     onChange={(e) =>
-                      setEditStudent({ ...editStudent, faculty: e.target.value })
+                      setEditStudent({ ...editStudent, email: e.target.value })
                     } />
-                    <label for="floatingPassword">Khoa</label>
+                    <label for="floatingPassword">Email</label>
                 </div>
-                <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="major:" 
-                    placeholder="name student"value={editStudent?editStudent.major[0]:""}
-                    onChange={(e) =>
-                      setEditStudent({ ...editStudent, major: e.target.value })
-                    } />
-                    <label for="floatingPassword">Chuyên ngành</label>
-                </div>
+                <label htmlFor="faculty">Khoa:</label>
+                <select id="faculty" value={selectedFaculty} onChange={handleFacultyChange}>
+                    {/* <option value="">{editStudent ? editStudent.faculty.facultyName : "Select a faculty"}</option> */}
+                    <option value="">Select a faculty</option>
+                    {faculties.map((faculty) => (
+                      <option key={faculty.id} value={faculty.facultyName}>
+                        {faculty.facultyName}
+                      </option>
+                    ))}
+                </select>
+                <label htmlFor="major" style={{marginLeft:"20px"}}>Chuyên ngành:</label>
+                <select id="major" value={selectedMajor} onChange={handleMajorChange}>
+                  <option value="">Select a major</option>
+                  {majors.map((major) => (
+                    <option key={major.id} value={major.majorName}>
+                      {major.majorName}
+                    </option>
+                  ))}
+                </select>
                 </form>
                 <button
                   type="button"
@@ -145,7 +242,6 @@ export const ManageStudents = () => {
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Tên đăng nhập</th>
-                  <th scope="col">Mật khẩu</th>
                   <th scope="col">Tên</th>
                   <th scope="col">MSSV</th>
                   <th scope="col">Email</th>
@@ -160,16 +256,15 @@ export const ManageStudents = () => {
                 {students.map((account, index) => (
                   <tr key={account._id}>
                     <th scope="row">{index + 1}</th>
-                    <td></td>
-                    <td></td>
+                    <td>{account.username}</td>
                     <td>{account.name}</td>
                     <td>{account.studentId}</td>
                     <td>{account.email}</td>
                     <td>{account.dateOfBirth}</td>
                     <td>{account.phoneNumber}</td>
                     <td>{account.isActive ? <span>&#10004;</span> : null}</td>
-                    <td>{account.faculty.facultyName}</td>
-                    <td>{account.major[0]}</td>
+                    <td>{account.faculty?account.faculty.facultyName:""}</td>
+                    <td>{account.major?account.major.majorName:""}</td>
                     <td>
                     <button
                           type="button"
@@ -177,6 +272,13 @@ export const ManageStudents = () => {
                           onClick={() => handleEdit(account)}
                         >
                           Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-warning btn-sm"
+                          onClick={() => handleDelete(account)}
+                        >
+                          Delete
                         </button>
                     </td>
                   </tr>

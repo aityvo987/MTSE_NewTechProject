@@ -60,6 +60,7 @@ require("./app/routes/topicPeriod.routes")(app);
 require("./app/routes/topicTask.routes")(app);
 require("./app/routes/notification.routes")(app);
 require("./app/routes/session.routes")(app);
+require("./app/routes/account.routes")(app);
 // require("./app/routes/file.routes")(app);
 
 // set port, listen for requests
