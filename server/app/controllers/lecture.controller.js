@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Lecture = require('../models/lecture.model');
+const User = require('../models/user.model');
 
 module.exports = {
   // Controller to add a new lecture
@@ -8,9 +9,7 @@ module.exports = {
       const { name, lectureId, email, dateOfBirth, phoneNumber, faculty, isFacultyHead } = req.body;
 
       // Validate faculty as a valid ObjectId value
-      if (!mongoose.Types.ObjectId.isValid(faculty)) {
-        return res.status(400).json({ error: 'Invalid faculty ObjectId' });
-      }
+      
 
       const newLecture = new Lecture({
         name,
@@ -72,10 +71,7 @@ module.exports = {
       // return res.status(200).json(string)
 
       // Validate faculty as a valid ObjectId value
-      if (faculty && !mongoose.Types.ObjectId.isValid(faculty)) {
-        return res.status(400).json({ error: 'Invalid faculty ObjectId' });
-      }
-
+      
       const updatedLecture = await Lecture.findByIdAndUpdate(
         id,
         {
@@ -94,7 +90,7 @@ module.exports = {
         return res.status(404).json({ error: 'Lecture not found' });
       }
 
-      res.json(updatedLecture);
+      res.status(201).json(updatedLecture);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -121,6 +117,32 @@ module.exports = {
       }
 
       res.json(updatedLecture);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  deleteLecturer: async (req, res) => {
+    try {
+      const { id } = req.params;
+      console.log("dleting",id);
+      if (!id) {
+        return res.status(400).json({ error: 'Lecturer ID is required' });
+      }
+
+      const deletedLecturer = await Lecture.findById(id);
+      const account = await User.findOne({email:deletedLecturer.email});
+      console.log(deletedLecturer);
+      console.log(account);
+      if (!deletedLecturer ||!account) {
+        return res.status(404).json({ error: 'Lecturer not found' });
+      }
+
+      deletedLecturer.deleteOne();
+      account.deleteOne();
+
+      res.status(201).json({ message: 'Lecturer deleted successfully' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });

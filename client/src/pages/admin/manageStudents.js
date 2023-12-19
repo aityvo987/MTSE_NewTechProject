@@ -4,8 +4,8 @@ import { GetAllStudents, GetAllAccounts,GetAllFaculties ,AddStudent, GetAllMajor
 import { GetUserSession } from "../../api/generalAPI";
 export const ManageStudents = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); 
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
+  const [deleteStudent, setDeleteStudent] = useState(null); 
   const [showForm, setShowForm] = useState(false);
   const [editStudent, setEditStudent] = useState(null);
   const [user, setUser] = useState();
@@ -46,13 +46,12 @@ export const ManageStudents = () => {
                 return student;
               });
               setStudents(updatedStudents);
-              setIsLoading(false);
               setFaculties(faculties);
               setMajors(majors);
+              setIsLoading(false);
             })
             .catch((error) => {
               console.log(error);
-              setIsLoading(false);
             });
         } else {
           console.log("error");
@@ -124,18 +123,29 @@ export const ManageStudents = () => {
     setIsCreate(false);
     setShowForm(true);
   };
-
   const handleDelete = (student) => {
-    console.log("Deleting",student._id);
-    DeleteStudent(token,student._id).then(response=>{
-      console.log("Delete",response);
-      if (response.status===201){
-        alert("Student deleted");
-      }
-      else {
-        alert(response.message);
-      }
-  });
+    setDeleteStudent(student);
+  };
+
+  const confirmDelete = () => {
+    if (deleteStudent) {
+      console.log("Deleting", deleteStudent._id);
+      DeleteStudent(token, deleteStudent._id)
+        .then((response) => {
+          console.log("Delete", response);
+          if (response.status === 201) {
+            alert("Student deleted");
+          } else {
+            alert(response.message);
+          }
+        })
+        .finally(() => {
+          setDeleteStudent(null);
+        });
+    }
+  };
+  const cancelDelete = () => {
+    setDeleteStudent(null);
   };
   const handleFormCancel = () => {
     setShowForm(false);
@@ -167,7 +177,18 @@ export const ManageStudents = () => {
             
             <button type="button" className="btn btn-primary btn-sm" onClick={toggleForm}>
                     Thêm
-                  </button>
+            </button>
+            {deleteStudent && (
+              <div className="confirmation-dialog">
+                <p>Are you sure you want to delete this student?</p>
+                <button className="btn btn-danger" onClick={confirmDelete}>
+                  Yes
+                </button>
+                <button className="btn btn-secondary" onClick={cancelDelete}>
+                  No
+                </button>
+              </div>
+            )}      
             {showForm && (
             <div className="form-edit">
               <form onSubmit={handleFormSubmit}>
@@ -189,12 +210,17 @@ export const ManageStudents = () => {
                     <label for="floatingPassword">MSSV</label>
                 </div>
                 <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="dateOfBirth" 
-                    placeholder="name student"value={editStudent?editStudent.dateOfBirth:""}
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="dueDate"
+                    placeholder="name student"
+                    value={editStudent ? editStudent.dateOfBirth : ""}
                     onChange={(e) =>
                       setEditStudent({ ...editStudent, dateOfBirth: e.target.value })
-                    } />
-                    <label for="floatingPassword">Ngày sinh</label>
+                    }
+                  />
+                  <label for="floatingPassword">Ngày sinh</label>
                 </div>
                 <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="email" 
@@ -287,6 +313,7 @@ export const ManageStudents = () => {
             </table>
           </div>
         )}
+        
       </div>
   );
 };

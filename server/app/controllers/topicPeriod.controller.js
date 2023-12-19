@@ -15,7 +15,7 @@ module.exports = {
                 dueDate,
             });
 
-            res.json(newTopicPeriod);
+            res.status(201).json(newTopicPeriod);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -72,7 +72,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic Period not found' });
             }
 
-            res.json(updatedTopicPeriod);
+            res.status(201).json(updatedTopicPeriod);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });

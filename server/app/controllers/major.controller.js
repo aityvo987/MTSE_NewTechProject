@@ -13,7 +13,7 @@ module.exports = {
         majorName,
       });
 
-      res.json(newMajor);
+      res.status(201).json(newMajor);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -70,7 +70,7 @@ module.exports = {
         return res.status(404).json({ error: 'Major not found' });
       }
 
-      res.json(updatedMajor);
+      res.status(201).json(updatedMajor);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
