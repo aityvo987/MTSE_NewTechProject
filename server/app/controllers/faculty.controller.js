@@ -30,6 +30,27 @@ module.exports = {
     }
   },
 
+  getFacultyDetail: async (req, res) => {
+    try {
+      const { facultyId } = req.params;
+
+      if (!facultyId) {
+        return res.status(400).json({ error: 'Faculty ID is required' });
+      }
+
+      const foundFaculty = await Faculty.findById(facultyId);
+
+      if (!foundFaculty) {
+        return res.status(404).json({ error: 'Faculty not found' });
+      }
+
+      res.json(foundFaculty);
+    } catch (error) {
+      console.error(error); // Log the error for debugging purposes
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
   editFaculty: async (req, res) => {
     try {
       const { facultyId } = req.params
