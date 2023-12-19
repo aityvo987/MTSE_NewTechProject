@@ -5,14 +5,17 @@ const Role = db.role;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+const studentController = require("./student.controller");
 
 exports.signup = (req, res) => {
+  //studentController.addStudent(req, res);
   const user = new User({
     username: req.body.username,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypt.hashSync(req.body.password, 8),
+    rolename: req.body.rolename,
   });
-
+ 
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
