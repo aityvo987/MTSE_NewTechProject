@@ -82,3 +82,21 @@ export const UpdateProfileStudent = async (accessToken,id, phoneNumber, address 
       return { message: 'Fail' };
     }
 }
+
+export const registerTopic = async (accessToken,topicId, student )=>{
+  try {
+      const response = await fetch(`/api/topics/${topicId}/register`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({ student })
+      });
+      const data =  await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
