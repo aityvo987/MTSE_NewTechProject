@@ -44,17 +44,14 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'Invalid lecture ObjectId' });
-      }
-
-      const foundLecture = await Lecture.findById(id);
+      
+      const foundLecture = await Lecture.findById(id).populate('faculty');
 
       if (!foundLecture) {
         return res.status(404).json({ error: 'Lecture not found' });
       }
 
-      res.json(foundLecture);
+      res.status(201).json(foundLecture);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -88,6 +85,31 @@ module.exports = {
 
       if (!updatedLecture) {
         return res.status(404).json({ error: 'Lecture not found' });
+      }
+
+      res.status(201).json(updatedLecture);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+  updateProfileLecture: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { phoneNumber, addresss } = req.body;
+      console.log("Updateprofile",id);
+      console.log("Updateprofile",phoneNumber);
+      const updatedLecture = await Lecture.findByIdAndUpdate(
+        id,
+        {
+          phoneNumber,
+          addresss
+        },
+        { new: true }
+      ).populate('faculty').populate('major');
+
+      if (!updatedLecture) {
+        return res.status(404).json({ error: 'lecture not found' });
       }
 
       res.status(201).json(updatedLecture);

@@ -1,4 +1,4 @@
-export const AddAccount = async (accessToken,username, email, password)=>{
+export const AddAccount = async (accessToken,username, email, password,roles)=>{
   try {
       const response = await fetch(`/api/auth/signup`, {
         method: 'POST',
@@ -6,7 +6,7 @@ export const AddAccount = async (accessToken,username, email, password)=>{
           'Content-Type': 'application/json',
           'x-access-token': `${accessToken}`,
         },
-        body: JSON.stringify({username, email, password})
+        body: JSON.stringify({username, email, password,roles})
       });
       const data =  response;
       return data
@@ -174,12 +174,13 @@ export const AddStudent = async (accessToken,name, studentId, email, dateOfBirth
 // Topics
 
 
-export const GetAllTopics = async ()=>{
+export const GetAllTopics = async (accessToken)=>{
     try {
         const response = await fetch(`/api/topics`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
         });
         const data = await response.json();
@@ -189,48 +190,50 @@ export const GetAllTopics = async ()=>{
         return { message: 'Fail' };
       }
   }
-export const UpdateTopic = async (topicId,topicName,description,students,faculty,major,topicPeriod )=>{
+export const UpdateTopic = async (accessToken,topicId,topicName,description,students,faculty,major,topicPeriod )=>{
     try {
-        const response = await fetch(`/api/topics/${topicId}`, {
+        const response = await fetch(`/api/admin/topics/${topicId}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({topicName,description,students,faculty,major,topicPeriod  })
         });
-        const data = await response.json();
+        const data = response;
         return data
       }
       catch (error) {
         return { message: 'Fail' };
       }
   }
-export const AddTopic = async (topicName,description,students,faculty,major,topicPeriod, )=>{
+export const AddTopic = async (accessToken,topicName,description,students,faculty,major,topicPeriod, )=>{
     try {
-        const response = await fetch(`/api/topics/`, {
+        const response = await fetch(`/api/admin/topics`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({topicName,description,students,faculty,major,topicPeriod,  })
         });
-        const data = await response.json();
+        const data = response;
         return data
       }
       catch (error) {
         return { message: 'Fail' };
       }
   }
-export const DeleteTopic = async (topicId )=>{
+export const DeleteTopic = async (accessToken,topicId )=>{
     try {
-        const response = await fetch(`/api/topics/${topicId}`, {
+        const response = await fetch(`/api/admin/topics/${topicId}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
-          body: JSON.stringify({  })
         });
-        const data = await response.json();
+        const data = response;
         return data
       }
       catch (error) {
@@ -239,12 +242,13 @@ export const DeleteTopic = async (topicId )=>{
   }
 
 
-export const AssignThesisLecturerTopic = async (topicId,instructor )=>{
+export const AssignThesisLecturerTopic = async (accessToken,topicId,instructor )=>{
     try {
         const response = await fetch(`/api/topics/${topicId}/assign`, {
           method: 'PATCH',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({ instructor })
         });
@@ -255,12 +259,13 @@ export const AssignThesisLecturerTopic = async (topicId,instructor )=>{
         return { message: 'Fail' };
       }
   }
-export const AssignStudentTopic = async (topicId,student )=>{
+export const AssignStudentTopic = async (accessToken,topicId,student )=>{
     try {
         const response = await fetch(`/api/topics/${topicId}/register`, {
           method: 'PATCH',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({ student })
         });

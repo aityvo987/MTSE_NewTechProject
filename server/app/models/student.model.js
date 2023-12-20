@@ -9,6 +9,7 @@ const studentSchema = new mongoose.Schema({
   email: String,
   dateOfBirth: Date,
   phoneNumber: String,
+  address: String,
   isActive: {
     type: Boolean,
     default: true,

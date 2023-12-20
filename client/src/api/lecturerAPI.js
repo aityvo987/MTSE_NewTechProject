@@ -201,3 +201,37 @@ export const DeleteTopicTaskFile = async (topicTaskId,fileId )=>{
       return { message: 'Fail' };
     }
 }
+
+export const GetLecturerDetail = async (accessToken,id)=>{
+  try {
+      const response = await fetch(`/api/lectures/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const UpdateProfileLecturer = async (accessToken,id, phoneNumber, address )=>{
+  try {
+      const response = await fetch(`/api/lectures/profile/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({ phoneNumber, address   })
+      });
+      const data =  response;
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}

@@ -9,6 +9,7 @@ const lectureSchema = new mongoose.Schema({
   email: String,
   dateOfBirth: Date,
   phoneNumber: String,
+  address: String,
   isFacultyHead: Boolean,
   isActive: {
     type: Boolean,
