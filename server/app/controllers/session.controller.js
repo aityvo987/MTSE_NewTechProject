@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 exports.getsession = (req, res) => {
-
+  console.log("User session",req.session.userinfo);
   if (typeof (req.session.userinfo) === 'undefined' || req.session.userinfo === null) {
     res.status(402).json({ message: "Session not found" })
   }

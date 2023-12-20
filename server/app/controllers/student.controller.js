@@ -49,11 +49,6 @@ module.exports = {
   getStudentDetail: async (req, res) => {
     try {
       const { id } = req.params;
-
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'Invalid student ObjectId' });
-      }
-
       const foundStudent = await Student.findById(id).populate('faculty').populate('major');
 
       if (!foundStudent) {
@@ -92,6 +87,31 @@ module.exports = {
           phoneNumber,
           faculty,
           major,
+        },
+        { new: true }
+      ).populate('faculty').populate('major');
+
+      if (!updatedStudent) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      res.status(201).json(updatedStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+  updateProfileStudent: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { phoneNumber, addresss } = req.body;
+      console.log("Updateprofile",id);
+      console.log("Updateprofile",phoneNumber);
+      const updatedStudent = await Student.findByIdAndUpdate(
+        id,
+        {
+          phoneNumber,
+          addresss
         },
         { new: true }
       ).populate('faculty').populate('major');

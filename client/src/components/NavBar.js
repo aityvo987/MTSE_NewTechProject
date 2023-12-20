@@ -33,7 +33,7 @@ export const NavigationBar = (props) => {
                             direction: "rtl",
                             textAlign: "left",
                             marginRight:"10px",
-                        }}>  {props.user.username}</h5>
+                        }}> {props.user.name?props.user.name:""}</h5>
                         
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>

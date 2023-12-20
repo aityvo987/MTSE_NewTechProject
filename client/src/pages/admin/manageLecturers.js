@@ -280,6 +280,7 @@ export const ManageLecturers = () => {
                   <th scope="col">Email</th>
                   <th scope="col">Ngày sinh</th>
                   <th scope="col">Số diện thoại</th>
+                  <th scope="col">Địa chỉ</th>
                   <th scope="col">Trưởng khoa</th>
                   <th scope="col">Ngành</th>
                 </tr>
@@ -294,6 +295,7 @@ export const ManageLecturers = () => {
                     <td>{account.email}</td>
                     <td>{account.dateOfBirth}</td>
                     <td>{account.phoneNumber}</td>
+                    <td>{account.address?account.address:""}</td>
                     <td>{account.isFacultyHead ? <span>&#10004;</span> : null}</td>
                     <td>{account.faculty?account.faculty.facultyName:""}</td>
                     <td>{account.major?account.major.majorName:""}</td>

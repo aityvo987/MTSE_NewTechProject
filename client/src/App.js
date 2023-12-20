@@ -11,6 +11,7 @@ import ResearchPage from './pages/VIewResearch';
 import {Login} from './pages/Login';
 import {ViewTopicPage} from './pages/general/viewTopic';
 import {ViewLecturerPage} from './pages/general/viewLecturer';
+import { UpdateProfile } from './pages/user/updateProfile';
 import { AdminPage } from './pages/admin/adminDashBoard';
 function App() {
   // const [backendData, setBackendData] = useState ([{}])
@@ -31,7 +32,7 @@ function App() {
         <Router>
           <Routes>
             <Route path='/' element={<Homepage/>}/>
-            <Route path='/profile' element={<ProfilePage/>}/>
+            <Route path='/profile' element={<UpdateProfile/>}/>
             <Route path='/research' element={<ResearchPage/>}/>
             <Route path='/login' element={<Login/>}/>
             <Route path='/topic' element={<ViewTopicPage/>}/>

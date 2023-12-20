@@ -15,7 +15,7 @@ exports.signup = (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8)
   });
 
-  console.log(req.body.roles);
+  console.log("role",req.body.roles);
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -43,7 +43,7 @@ exports.signup = (req, res) => {
             }
 
             roles.map(role => {
-              res.send({ message: `${role.name} was registered successfully!` });
+              res.status(201).send({ message: `${role.name} was registered successfully!` });
             })
           });
         }
@@ -70,11 +70,10 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  User.findOne({
-    username: req.body.username
-  })
+  User.findOne({ username: req.body.username })
     .populate("roles", "-__v")
     .exec((err, user) => {
+      console.log("User login", user);
       if (err) {
         res.status(500).send({ message: err });
         return;
@@ -84,43 +83,69 @@ exports.signin = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
       }
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+      var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!"
+          message: "Invalid Password!",
         });
       }
 
       var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400 // 24 hours
+        expiresIn: 86400, // 24 hours
       });
 
       var authorities = [];
-
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
+      console.log("User authorities", authorities);
 
-      if (authorities.includes("ROLE_STUDENT")){
-        const student = Student.findOne({email:user.email});
-        req.session.userinfo = student._doc;
+      if (authorities.includes("ROLE_STUDENT")) {
+        Student.findOne({ email: user.email })
+          .then((student) => {
+            if (student) {
+              req.session.userinfo = student;
+              req.session.useraccount = user._doc;
+              req.session.roles = authorities;
+              req.session.accessToken = token;
+              console.log("User student", req.session.userinfo);
+              res.status(200).json({ signin: true });
+            } else {
+              res.status(405).json({ signin: false });
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            res.status(500).json({ signin: false });
+          });
+      } else if (authorities.includes("ROLE_LECTURE")) {
+        Lecture.findOne({ email: user.email })
+          .then((lecturer) => {
+            if (lecturer) {
+              req.session.userinfo = lecturer;
+              req.session.useraccount = user._doc;
+              req.session.roles = authorities;
+              req.session.accessToken = token;
+              console.log("User student", req.session.userinfo);
+              res.status(200).json({ signin: true });
+            } else {
+              res.status(405).json({ signin: false });
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            res.status(500).json({ signin: false });
+          });
+      } else {
+        req.session.userinfo = "ADMIN";
+        req.session.useraccount = user._doc;
+        req.session.roles = authorities;
+        req.session.accessToken = token;
+        console.log("User student", req.session.userinfo);
+        res.status(200).json({ signin: true });
       }
-      else if (authorities.includes("ROLE_LECTURE")){
-        const lecture = Lecture.findOne({email:user.email});
-        req.session.userinfo = lecture._doc;
-      }
-      else {
-        req.session.userinfo="ADMIN";
-      }
-      req.session.useraccount=user._doc;
-      req.session.roles=authorities;
-      req.session.accessToken= token;
-      res.status(200).json({signin:true})
     });
 };
 

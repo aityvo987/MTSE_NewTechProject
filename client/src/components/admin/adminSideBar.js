@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { SignOut } from "../../api/generalAPI";
+import { SignOut } from "../../api/generalAPI";
 import { useNavigate } from "react-router-dom";
 
 export const AdminSideBar = (props) => {
@@ -7,7 +7,7 @@ export const AdminSideBar = (props) => {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
-    // SignOut();
+    SignOut();
     navigate("/");
   };
 

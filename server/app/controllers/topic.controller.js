@@ -14,25 +14,25 @@ module.exports = {
                 topicPeriod,
             } = req.body;
 
-            if (students != null) {
-                const areStudentsValid = students.every(studentId => mongoose.Types.ObjectId.isValid(studentId));
+            // if (students != null) {
+            //     const areStudentsValid = students.every(studentId => mongoose.Types.ObjectId.isValid(studentId));
 
-                if (!areStudentsValid) {
-                    return res.status(400).json({ error: 'Invalid studentId in the students array' });
-                }
-            }
+            //     if (!areStudentsValid) {
+            //         return res.status(400).json({ error: 'Invalid studentId in the students array' });
+            //     }
+            // }
 
-            if (!mongoose.Types.ObjectId.isValid(faculty)) {
-                return res.status(400).json({ error: `Invalid facultyId ${faculty}` });
-            }
+            // if (!mongoose.Types.ObjectId.isValid(faculty)) {
+            //     return res.status(400).json({ error: `Invalid facultyId ${faculty}` });
+            // }
 
-            if (!mongoose.Types.ObjectId.isValid(major)) {
-                return res.status(400).json({ error: `Invalid majorId ${major}` });
-            }
+            // if (!mongoose.Types.ObjectId.isValid(major)) {
+            //     return res.status(400).json({ error: `Invalid majorId ${major}` });
+            // }
 
-            if (!mongoose.Types.ObjectId.isValid(topicPeriod)) {
-                return res.status(400).json({ error: `Invalid Topic Period ${topicPeriod}` });
-            }
+            // if (!mongoose.Types.ObjectId.isValid(topicPeriod)) {
+            //     return res.status(400).json({ error: `Invalid Topic Period ${topicPeriod}` });
+            // }
 
             const newTopic = new Topic({
                 topicName,
@@ -109,25 +109,25 @@ module.exports = {
                 topicPeriod,
             } = req.body;
 
-            if (students != null) {
-                const areStudentsValid = students.every(studentId => mongoose.Types.ObjectId.isValid(studentId));
+            // if (students != null) {
+            //     const areStudentsValid = students.every(studentId => mongoose.Types.ObjectId.isValid(studentId));
 
-                if (!areStudentsValid) {
-                    return res.status(400).json({ error: 'Invalid studentId in the students array' });
-                }
-            }
+            //     if (!areStudentsValid) {
+            //         return res.status(400).json({ error: 'Invalid studentId in the students array' });
+            //     }
+            // }
 
-            if (!mongoose.Types.ObjectId.isValid(faculty)) {
-                return res.status(400).json({ error: `Invalid facultyId ${faculty}` });
-            }
+            // if (!mongoose.Types.ObjectId.isValid(faculty)) {
+            //     return res.status(400).json({ error: `Invalid facultyId ${faculty}` });
+            // }
 
-            if (!mongoose.Types.ObjectId.isValid(major)) {
-                return res.status(400).json({ error: `Invalid majorId ${major}` });
-            }
+            // if (!mongoose.Types.ObjectId.isValid(major)) {
+            //     return res.status(400).json({ error: `Invalid majorId ${major}` });
+            // }
 
-            if (!mongoose.Types.ObjectId.isValid(topicPeriod)) {
-                return res.status(400).json({ error: `Invalid Topic Period ${topicPeriod}` });
-            }
+            // if (!mongoose.Types.ObjectId.isValid(topicPeriod)) {
+            //     return res.status(400).json({ error: `Invalid Topic Period ${topicPeriod}` });
+            // }
 
             const updatedTopic = await Topic.findByIdAndUpdate(
                 topicId,
@@ -146,7 +146,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic not found' });
             }
 
-            res.json(updatedTopic);
+            res.status(201).json(updatedTopic);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -164,7 +164,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic not found' });
             }
 
-            res.json({ message: 'Topic deleted successfully' });
+            res.status(201).json({ message: 'Topic deleted successfully' });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });

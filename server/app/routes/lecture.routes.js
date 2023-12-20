@@ -17,5 +17,6 @@ module.exports = function (app) {
   app.get('/api/lectures/:id', lectureController.getLectureDetail);
   app.delete('/api/lectures/:id', lectureController.deleteLecturer);
   app.put('/api/lectures/:id', [authJwt.verifyToken, authJwt.isAdmin], lectureController.updateLecture);
+  app.put('/api/lectures/profile/:id', [authJwt.verifyToken, authJwt.isLecture], lectureController.updateProfileLecture);
   app.patch('/api/lectures/:id/status', [authJwt.verifyToken, authJwt.isAdmin], lectureController.updateStatusLecture);
 };
