@@ -13,6 +13,9 @@ import {ViewTopicPage} from './pages/general/viewTopic';
 import {ViewLecturerPage} from './pages/general/viewLecturer';
 import { UpdateProfile } from './pages/user/updateProfile';
 import { AdminPage } from './pages/admin/adminDashBoard';
+
+
+
 function App() {
   // const [backendData, setBackendData] = useState ([{}])
   // useEffect (() => {
@@ -24,6 +27,7 @@ function App() {
   // }
   // )
   // },[])
+
   return (
     
     <div className="App">
