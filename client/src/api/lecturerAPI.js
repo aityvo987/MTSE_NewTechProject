@@ -235,3 +235,39 @@ export const UpdateProfileLecturer = async (accessToken,id, phoneNumber, address
       return { message: 'Fail' };
     }
 }
+
+export const assignInstructor = async (accessToken,topicId, instructor )=>{
+  try {
+      const response = await fetch(`/api/topics/${topicId}/register`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({ instructor })
+      });
+      const data =  await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+
+export const approveTopic = async (accessToken,topicId )=>{
+  try {
+      const response = await fetch(`/api/topics/${topicId}/approve`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({  })
+      });
+      const data =  response;
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}

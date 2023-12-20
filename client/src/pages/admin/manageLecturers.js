@@ -72,7 +72,7 @@ export const ManageLecturers = () => {
      }
      
      Promise.all([
-       AddAccount(token, editLecturer.email, editLecturer.email, "123456","Lecture"),
+       AddAccount(token, editLecturer.email, editLecturer.email, "123456",["Lecture","Faculty Head"]),
        AddLecturer(token, editLecturer.name, editLecturer.lectureId, editLecturer.email, editLecturer.dateOfBirth, "", editLecturer.faculty,editLecturer.isFacultyHead)
      ])
        .then(([accountData, lecturerData]) => {

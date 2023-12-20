@@ -20,6 +20,7 @@ module.exports = function (app) {
   app.delete('/api/topics/:topicId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicController.deleteTopic);
   app.delete('/api/admin/topics/:topicId', [authJwt.verifyToken, authJwt.isAdmin], topicController.deleteTopic);
   app.patch('/api/topics/:topicId/approve', [authJwt.verifyToken, authJwt.isFacultyHead], topicController.approvalTopic);
-  app.patch('/api/topics/:topicId/assign', [authJwt.verifyToken, authJwt.isFacultyHead], topicController.assignInstructor);
-  app.patch('/api/topics/:topicId/register', [authJwt.verifyToken], topicController.registerTopic);
+  app.patch('/api/topics/:topicId/assign', [authJwt.verifyToken, authJwt.isFacultyHead], topicController.assignThesisLecture);
+  app.patch('/api/topics/:topicId/assignins', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicController.assignInstructor);
+  app.patch('/api/topics/:topicId/register', [authJwt.verifyToken, authJwt.isStudent], topicController.registerTopic);
 };

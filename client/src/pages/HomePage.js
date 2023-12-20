@@ -8,6 +8,7 @@ export default function Homepage() {
     const navigate = useNavigate();
     const [hasSession, setHasSession] = useState(false);
     const [user, setUser] = useState();
+    const [roles, setRoles] = useState();
     useEffect(() => {
         GetUserSession()
             .then(respone => {
@@ -15,6 +16,7 @@ export default function Homepage() {
                     console.log("Userinfo",respone.userinfo);
                     setHasSession(true)
                     setUser(respone.userinfo)
+                    setRoles(respone.roles)
                     if(respone.userinfo==="ADMIN"){
                         navigate("/admin");
                     }
@@ -34,7 +36,7 @@ export default function Homepage() {
         // Render tutor-specific content
             <DefaultNavBar></DefaultNavBar>
             ) : (
-                <NavigationBar user={user} > </NavigationBar>
+                <NavigationBar user={user} role={roles} > </NavigationBar>
             )}
             
             <h2>
