@@ -43,7 +43,7 @@ exports.signup = (req, res) => {
             }
 
             roles.map(role => {
-              res.status(201).send({ message: `${role.name} was registered successfully!` });
+              res.status(201).send({ message: `User was registered successfully!` });
             })
           });
         }

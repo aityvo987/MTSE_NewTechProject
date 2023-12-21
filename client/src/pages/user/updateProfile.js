@@ -111,7 +111,7 @@ export const UpdateProfile = () => {
         // Render tutor-specific content
         <DefaultNavBar></DefaultNavBar>
       ) : (
-        <NavigationBar user={user} > </NavigationBar>
+        <NavigationBar user={user} role={role} > </NavigationBar>
       )}
         <h1>Thông tin cá nhân</h1>
         {isLoading ? (

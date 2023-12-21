@@ -13,9 +13,8 @@ import {ViewTopicPage} from './pages/general/viewTopic';
 import {ViewLecturerPage} from './pages/general/viewLecturer';
 import { UpdateProfile } from './pages/user/updateProfile';
 import { AdminPage } from './pages/admin/adminDashBoard';
-
-
-
+import { RegisterTopicPage } from './pages/user/registerTopic';
+import { ApproveTopicPage } from './pages/user/approveTopic';
 function App() {
   // const [backendData, setBackendData] = useState ([{}])
   // useEffect (() => {
@@ -42,6 +41,8 @@ function App() {
             <Route path='/topic' element={<ViewTopicPage/>}/>
             <Route path='/lecturer' element={<ViewLecturerPage/>}/>
             <Route path='/admin' element={<AdminPage/>}/>
+            <Route path='/register' element={<RegisterTopicPage/>}/>
+            <Route path='/approve' element={<ApproveTopicPage/>}/>
           </Routes>
         </Router>
       </div>

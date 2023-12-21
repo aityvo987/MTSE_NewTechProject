@@ -8,7 +8,7 @@ export const NavigationBar = (props) => {
         SignOut()
         navigate('/')
     }
-    
+    console.log(props.role);
 
     return (
         <nav style={{position:'static',marginBottom:'35px'}} class="navbar bg-body-tertiary fixed-top">
@@ -46,12 +46,12 @@ export const NavigationBar = (props) => {
                                 <a class="nav-link active" aria-current="page" href="/courses">Quản lý đề tài</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/courses">Đăng ký đề tài</a>
+                                <a class="nav-link active" aria-current="page" href="/register">Đăng ký đề tài</a>
                             </li>
-                            {props.role==="ROLE_MODERATOR"&&(
-                              <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/courses">Duyệt đề tài</a>
-                              </li>
+                            {props.role.includes("ROLE_FACULTY HEAD") && (
+                            <li className="nav-item">
+                                <a className="nav-link active" aria-current="page" href="/approve">Duyệt đề tài</a>
+                            </li>
                             )}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
