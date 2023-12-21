@@ -14,6 +14,7 @@ module.exports = function (app) {
   app.post('/api/students', [authJwt.verifyToken, authJwt.isAdmin], studentController.addStudent);
   app.get('/api/students',  studentController.getAllStudents);
   app.get('/api/students/:id',  studentController.getStudentDetail);
+  app.get('/api/students/email/:email',  studentController.getStudentDetailByEmail);
   app.put('/api/students/:id', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStudent);
   app.put('/api/students/profile/:id', [authJwt.verifyToken, authJwt.isStudent], studentController.updateProfileStudent);
   app.patch('/api/students/:id/status', [authJwt.verifyToken, authJwt.isAdmin], studentController.updateStatusStudent);

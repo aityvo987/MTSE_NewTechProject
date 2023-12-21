@@ -5,7 +5,7 @@ const User = require('../models/user.model');
 module.exports = {
   addStudent: async (req, res) => {
     try {
-      const { name, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
+      const { name, avatar, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
 
       // Validate faculty and major as valid ObjectId values
       // if (!mongoose.Types.ObjectId.isValid(faculty)) {
@@ -18,6 +18,7 @@ module.exports = {
 
       const newStudent = new Student({
         name,
+        avatar,
         studentId,
         email,
         dateOfBirth,
@@ -61,7 +62,21 @@ module.exports = {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+  getStudentDetailByEmail: async (req, res) => {
+    try {
+      const { email } = req.params;
+      const foundStudent = await Student.find({email: email});
 
+      if (!foundStudent) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+
+      res.json(foundStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
   // Controller to update student (excluding isActive)
   updateStudent: async (req, res) => {
     try {
