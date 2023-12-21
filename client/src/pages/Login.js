@@ -48,14 +48,14 @@ export const Login = () => {
         class="form-signin w-100 m-auto"
       >
         <form>
-          {/* <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57" /> */}
+          <img class="mb-4" src="https://dongphucvina.vn/wp-content/uploads/2022/09/Logo-DH-Su-Pham-Ky-Thuat-TP-Ho-Chi-Minh-HCMUTE-768x986.webp" alt="" width="72" height="57" />
           <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
           <div class="form-floating">
             <input
               onChange={handleUsernameOnChange}
               type="text"
-              class="form-control"
+              class="form-control"  
               id="floatingInput"
             />
             <label for="floatingInput">User name</label>
@@ -106,39 +106,34 @@ export const Login = () => {
             <GoogleOAuthProvider clientId="313774542583-vttl8cpcccoemm3r64h1qsu8sn4d73j6.apps.googleusercontent.com">
               <GoogleLogin
                 onSuccess={(credentialResponse) => {
-                  var email = JSON.stringify(
-                    parseJwt(credentialResponse.credential).email
-                  );
-                  console.log(
-                    JSON.stringify(
-                      parseJwt(credentialResponse.credential).email
-                    )
-                  );
-                  console.log(credentialResponse);
+                  var email = parseJwt(credentialResponse.credential).email;
+                  console.log("Email: ", email);
+
+                  if (!email.includes("hcmute.edu.vn")) {
+                    alert("Must use hcmute.edu.vn email! Please try again.");
+                    return;
+                  }
+
+                  var jwtToken = credentialResponse.credential;
+                  console.log("jwtToken: ", jwtToken);
+
                   fetch(`http://localhost:5000/api/students/email/${email}`)
                     .then((res) => res.json())
                     .then((data) => {
-                      console.log(data);
-                      if(data!=null)
-                      {
-                        navigate("/topic");
+                      console.log("Data: ", data);
+                      if (data.length !== 0) {
+                        console.log("User exists, navigating...");
+                        // Navigate to student page
+                        navigate("/");
+                      } else {
+                        // Does not exist. Add a student with only field email and navigate to student page
+                        console.log("User does not exist, navigating...");
+                        navigate("/");
                       }
-                      else
-                      {
-                        //Chỗ này sẽ là code add student đó vào database 
-                        navigate("/topic");
-                      }
+                    })
+                    .catch((error) => {
+                      console.error("Fetch error: ", error);
                     });
-
-                  if (
-                    JSON.stringify(
-                      parseJwt(credentialResponse.credential).email
-                    ).includes("hcmute.edu.vn")
-                  ) {
-
-                  } else {
-                    alert("Must use hcmute.edu.vn email!");
-                  }
                 }}
                 onError={() => {
                   console.log("Login Failed");
