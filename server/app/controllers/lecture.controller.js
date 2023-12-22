@@ -10,7 +10,7 @@ module.exports = {
 
       // Validate faculty as a valid ObjectId value
       
-
+      const address="";
       const newLecture = new Lecture({
         name,
         lectureId,
@@ -19,6 +19,7 @@ module.exports = {
         phoneNumber,
         faculty,
         isFacultyHead,
+        address,
       });
 
       const savedLecture = await newLecture.save();
@@ -96,14 +97,14 @@ module.exports = {
   updateProfileLecture: async (req, res) => {
     try {
       const { id } = req.params;
-      const { phoneNumber, addresss } = req.body;
+      const { phoneNumber, address } = req.body;
       console.log("Updateprofile",id);
       console.log("Updateprofile",phoneNumber);
       const updatedLecture = await Lecture.findByIdAndUpdate(
         id,
         {
           phoneNumber,
-          addresss
+          address
         },
         { new: true }
       ).populate('faculty').populate('major');

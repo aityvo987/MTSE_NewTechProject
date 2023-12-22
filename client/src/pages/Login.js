@@ -124,7 +124,11 @@ export const Login = () => {
                       if (data.length !== 0) {
                         console.log("User exists, navigating...");
                         // Navigate to student page
-                        navigate("/");
+                        SignIn(email, "123456").then((respone) => {
+                          respone.signin
+                            ? navigate("/")
+                            : alert("Sign in informations is incorrect");
+                        });
                       } else {
                         // Does not exist. Add a student with only field email and navigate to student page
                         console.log("User does not exist, navigating...");

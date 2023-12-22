@@ -6,7 +6,7 @@ module.exports = {
   addStudent: async (req, res) => {
     try {
       const { name, avatar, studentId, email, dateOfBirth, phoneNumber, faculty, major } = req.body;
-
+      const address="";
       // Validate faculty and major as valid ObjectId values
       // if (!mongoose.Types.ObjectId.isValid(faculty)) {
       //   return res.status(400).json({ error: 'Invalid faculty ObjectId' });
@@ -23,6 +23,7 @@ module.exports = {
         email,
         dateOfBirth,
         phoneNumber,
+        address,
         faculty,
         major,
       });
@@ -119,14 +120,14 @@ module.exports = {
   updateProfileStudent: async (req, res) => {
     try {
       const { id } = req.params;
-      const { phoneNumber, addresss } = req.body;
+      const { phoneNumber, address } = req.body;
       console.log("Updateprofile",id);
       console.log("Updateprofile",phoneNumber);
       const updatedStudent = await Student.findByIdAndUpdate(
         id,
         {
           phoneNumber,
-          addresss
+          address
         },
         { new: true }
       ).populate('faculty').populate('major');

@@ -67,11 +67,12 @@ export const UpdateProfile = () => {
        window.alert('Please fill in required field.');
        return;
      }
-     if (role==="ROLE_STUDENT"){
+     if (role[0]==="ROLE_STUDENT"){
+      console.log("role");
         UpdateProfileStudent(token,editProfile._id,editProfile.phoneNumber,editProfile.address)
         .then((response) => {
           if (response.status === 201) {
-            alert("profile updated");
+            alert("Profile updated");
             window.location.reload();
           } else {
             alert("Error update profile");
@@ -85,7 +86,7 @@ export const UpdateProfile = () => {
         UpdateProfileLecturer(token,editProfile._id,editProfile.phoneNumber,editProfile.address)
        .then((response) => {
          if (response.status === 201) {
-           alert("profile updated");
+           alert("Profile updated");
            window.location.reload();
          } else {
            alert("Error update profile");
