@@ -42,7 +42,7 @@ export const NavigationBar = (props) => {
                                 <a class="nav-link active" aria-current="page" href="/home">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/courses">Quản lý đề tài</a>
+                                <a class="nav-link active" aria-current="page" href="/manage">Quản lý đề tài</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="/register">Đăng ký đề tài</a>

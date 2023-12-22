@@ -15,6 +15,7 @@ import { UpdateProfile } from './pages/user/updateProfile';
 import { AdminPage } from './pages/admin/adminDashBoard';
 import { RegisterTopicPage } from './pages/user/registerTopic';
 import { ApproveTopicPage } from './pages/user/approveTopic';
+import {ManageTopic} from './pages/user/manageTopic';
 function App() {
   // const [backendData, setBackendData] = useState ([{}])
   // useEffect (() => {
@@ -43,6 +44,7 @@ function App() {
             <Route path='/admin' element={<AdminPage/>}/>
             <Route path='/register' element={<RegisterTopicPage/>}/>
             <Route path='/approve' element={<ApproveTopicPage/>}/>
+            <Route path='/manage' element={<ManageTopic/>}/>
           </Routes>
         </Router>
       </div>

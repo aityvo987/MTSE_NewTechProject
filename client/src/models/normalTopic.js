@@ -31,7 +31,6 @@ export const NormalTopic = (props) => {
     setModalVisible(false);
   };
   const registerBtn=async ()=>{
-    console.log("Registing Student", props)
     if(props.role[0]==="ROLE_STUDENT"){
       console.log("Registing Student", props.student)
       const response = await registerTopic (props.token,props.topic._id, props.student);
@@ -45,9 +44,10 @@ export const NormalTopic = (props) => {
       }
     }
     else if (props.role[0]==="ROLE_LECTURE"){
+      console.log("Registing Instructor", props)
         const response = await assignInstructor (props.token,props.topic._id, props.lecture);
-      if (response.message) {
-        window.alert(response.message);
+      if (response.status===201) {
+        window.alert('Đăng ký GVHD thành công.');
         if (response.success) {
           window.location.reload();
         }
