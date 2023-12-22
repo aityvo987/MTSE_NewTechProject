@@ -15,7 +15,7 @@ exports.signup = (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8)
   });
 
-  console.log("role",req.body.roles);
+  // console.log("role",req.body.roles);
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -73,7 +73,7 @@ exports.signin = (req, res) => {
   User.findOne({ username: req.body.username })
     .populate("roles", "-__v")
     .exec((err, user) => {
-      console.log("User login", user);
+      // console.log("User login", user);
       if (err) {
         res.status(500).send({ message: err });
         return;
@@ -110,7 +110,7 @@ exports.signin = (req, res) => {
               req.session.useraccount = user._doc;
               req.session.roles = authorities;
               req.session.accessToken = token;
-              console.log("User student", req.session.userinfo);
+              // console.log("Student", req.session.userinfo);
               res.status(200).json({ signin: true });
             } else {
               res.status(405).json({ signin: false });
@@ -120,7 +120,7 @@ exports.signin = (req, res) => {
             console.error("Error:", error);
             res.status(500).json({ signin: false });
           });
-      } else if (authorities.includes("ROLE_LECTURE")) {
+      } else if (authorities.includes("ROLE_LECTURE") || authorities.includes("ROLE_FACULTY HEAD")) {
         Lecture.findOne({ email: user.email })
           .then((lecturer) => {
             if (lecturer) {
@@ -128,7 +128,7 @@ exports.signin = (req, res) => {
               req.session.useraccount = user._doc;
               req.session.roles = authorities;
               req.session.accessToken = token;
-              console.log("User student", req.session.userinfo);
+              // console.log("Lecture", req.session.userinfo);
               res.status(200).json({ signin: true });
             } else {
               res.status(405).json({ signin: false });
@@ -143,7 +143,7 @@ exports.signin = (req, res) => {
         req.session.useraccount = user._doc;
         req.session.roles = authorities;
         req.session.accessToken = token;
-        console.log("User student", req.session.userinfo);
+        // console.log("Admin", req.session.userinfo);
         res.status(200).json({ signin: true });
       }
     });

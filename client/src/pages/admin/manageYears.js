@@ -45,7 +45,7 @@ export const ManageYears = () => {
               <form>
                 <div class="form-floating mb-3">
                     <input type='text' class="form-control" id="floatingInput0" placeholder="username" />
-                    <label for="floatingInput">Tên niên khoá</label>
+                    <label for="floatingInput">Tên niên khóa</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="floatingPassword1" placeholder="Password" />
@@ -74,7 +74,7 @@ export const ManageYears = () => {
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Niên khoá</th>
+                  <th scope="col">Niên khóa</th>
                   <th scope="col">Năm bắt đầu</th>
                   <th scope="col">Năm kết thúc</th>
                 </tr>
