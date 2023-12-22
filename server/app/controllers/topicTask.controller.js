@@ -106,7 +106,8 @@ module.exports = {
         try {
             const { topicTaskId } = req.params;
 
-
+            console.log("Check topic task Id",topicTaskId);
+            console.log("Check topic file",req.body);
             const newFile = await fileController.addFile(req.file.originalname, req.file.mimetype, req.file.buffer);
 
             if (!newFile) {
@@ -131,7 +132,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic Task not found' });
             }
 
-            res.json(updatedTopicTask);
+            res.status(201).json(updatedTopicTask);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -216,9 +217,9 @@ module.exports = {
 
     downLoadTopicTaskFile: async (req, res) => {
         try {
-            // Extract the fileId from the request parameters
+            
             const { fileId } = req.params;
-
+            console.log("Download File",fileId);
             // Return the result of downloadFile
             return await fileController.downloadFile(fileId, res);
 

@@ -4,6 +4,7 @@ import { DefaultNavBar } from "../../components/defaultNavBar";
 import { useNavigate } from "react-router-dom";
 import { GetUserSession, GetTopics } from "../../api/generalAPI.js";
 import {AddTopicTask, GetTopicTasksTopic,CommentTopicTask} from"../../api/lecturerAPI.js";
+import {UploadTopicTaskFile,GetAllTopicTaskFile,DownLoadTopicTaskFile} from"../../api/studentAPI.js";
 import "../../style/ManageTopic.css";
 
 export const ManageTopic = () => {
@@ -22,6 +23,7 @@ export const ManageTopic = () => {
   const [commentForm, setCommentForm] = useState(false);
   const [newTask, setNewTask] = useState("");
   const [newComment, setNewComment] = useState("");
+  const [selectedFile, setSelecTedFile] = useState("");
 
   useEffect(() => {
     GetUserSession().then((response) => {
@@ -70,11 +72,17 @@ export const ManageTopic = () => {
     const topicId = event.target.value;
     const selectedTopic = topics.find((topic) => topic._id === topicId.toString());
     setSelectedTopic(selectedTopic);
-
+  
     if (selectedTopic) {
       try {
-        const tasks = await GetTopicTasksTopic(token,topicId);
-        console.log("Check Topic Task",tasks)
+        const tasks = await GetTopicTasksTopic(token, topicId);
+        console.log("Check Topic Task", tasks);
+  
+        for (const task of tasks) {
+          const fileData = await GetAllTopicTaskFile(token,task._id);
+          task.fileData = fileData;
+        }
+        console.log("Check file",tasks);
         setTopicTasks(tasks);
       } catch (error) {
         console.log("Failed to fetch topic tasks:", error);
@@ -96,7 +104,7 @@ export const ManageTopic = () => {
     AddTopicTask(token,newTask.taskName,newTask.description,newTask.deadline,newTask.topic)
     .then((response) => {
       if (response.status === 201) {
-        alert("Add new topic task");
+        alert("Finish comment");
         window.location.reload();
       } else {
         alert(response.message);
@@ -139,8 +147,33 @@ export const ManageTopic = () => {
     setShowForm(false);
   };
 
-
-
+const DownLoadHandler =(fileId) =>{
+  DownLoadTopicTaskFile(token,fileId);
+}
+  //FOr student
+  const handleFileInputChange = async (event, taskId) => {
+    const newFile = event.target.files[0];
+    setSelecTedFile((prevSelectedFile) => ({
+      ...prevSelectedFile,
+      [taskId]: newFile,
+    }));
+  };
+  
+  const handleFileUploadCancel = (taskId) => {
+    setSelecTedFile((prevSelectedFile) => ({
+      ...prevSelectedFile,
+      [taskId]: null,
+    }));
+  };
+  const handleFileUploadConfirmation = (taskId) => {
+    console.log("Upload file", selectedFile[taskId]);
+    UploadTopicTaskFile(token, taskId, selectedFile[taskId]);
+    setSelecTedFile((prevSelectedFile) => ({
+      ...prevSelectedFile,
+      [taskId]: null,
+    }));
+    window.location.reload();
+  };
 
   return (
     <div className="Homepage" style={{ width: "100%" }}>
@@ -201,7 +234,7 @@ export const ManageTopic = () => {
                     <p>
                       <strong>Miêu tả đề tài:</strong> {selectedTopic.description}
                     </p>
-                    {showForm ? (
+                    {role[0] === "ROLE_LECTURE" && showForm ? (
                       <div className="form-edit">
                         <form onSubmit={handleFormSubmit}>
                           <div className="form-floating mb-3">
@@ -243,26 +276,50 @@ export const ManageTopic = () => {
                             />
                             <label htmlFor="dueDate">Deadline</label>
                           </div>
-                          <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={handleFormCancel}
+                          <div
+                            className="btn-group w-100"
+                            role="group"
+                            aria-label="Button Group"
+                            style={{marginTop:"30px",marginBottom:"30px"}}
                           >
-                            Huỷ
-                          </button>
-                          <button type="submit" className="btn btn-primary">
-                            Lưu
-                          </button>
+                            <button
+                              onClick={handleFormCancel}
+                              className="btn btn-light w-50 py-2 btn-3d"
+                              style={{
+                                border: "none",
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                transform: "translateY(0)",
+                                transition: "transform 0.2s ease-in-out",
+                              }}
+                            >
+                              Huỷ
+                            </button>
+                            <button
+                              className="btn btn-info w-50 py-2 btn-3d"
+                              type="submit"
+                              style={{
+                                border: "none",
+                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                transform: "translateY(0)",
+                                transition: "transform 0.2s ease-in-out",
+                              }}
+                            >
+                              Lưu
+                            </button>
+                          </div>
+                          
                         </form>
                       </div>
                     ) : (
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-sm"
-                        onClick={()=>toggleForm(selectedTopic._id)}
-                      >
-                        Thêm
-                      </button>
+                      role[0] === "ROLE_LECTURE" && (
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-sm"
+                          onClick={() => toggleForm(selectedTopic._id)}
+                        >
+                          Thêm
+                        </button>
+                      )
                     )}
                     <h2 className="section-title">Topic Tasks</h2>
                     {topicTasks.map((task, index) => (
@@ -276,6 +333,23 @@ export const ManageTopic = () => {
                         <p className="task-deadline">
                           <strong>Deadline:</strong> {task.deadline}
                         </p>
+                        <div className="task-files">
+                          <strong>Files SV:</strong>{" "}
+                          {task.fileData
+                            .filter((file) => file && file.fileName)
+                            .map((file, fileIndex, filesArray) => (
+                              <span key={fileIndex}>
+                                <a
+                                  href="#"
+                                  onClick={() => DownLoadHandler(file._id)}
+                                  style={{ textDecoration: "underline", cursor: "pointer" }}
+                                >
+                                  {file.fileName}
+                                </a>
+                                {fileIndex !== filesArray.length - 1 && ", "}
+                              </span>
+                            ))}
+                        </div>
                         <p className="task-comment">
                           <strong>Đánh giá của GVHD:</strong> {task.comment ? task.comment : ""}
                         </p>
@@ -321,14 +395,49 @@ export const ManageTopic = () => {
                           </div>
                         )}
                         {role[0] === "ROLE_STUDENT" && (
-                          <div>
-                            <button
-                              type="button"
-                              className="btn btn-primary btn-sm"
-                              // onClick={() => handleUpload(task._id)}
-                            >
-                              Upload File
-                            </button>
+                          <div style={{ backgroundColor: '#f5f5f5', padding: '10px' }}>
+                            <input
+                              type="file"
+                              id={`file-input-${task._id}`}
+                              accept=".pdf,.doc,.docx,.txt"
+                              onChange={(event) => handleFileInputChange(event, task._id)}
+                              style={{ display: 'none' }}
+                            />
+                            <label htmlFor={`file-input-${task._id}`} className="btn btn-primary btn-sm">
+                              Chọn File
+                            </label>
+                            {selectedFile && selectedFile[task._id] && (
+                              <div>
+                                <p>File đã lựa chọn: {selectedFile[task._id].name}</p>
+                                <p>Xác nhận? Bạn không thể sửa khi đã nộp</p>
+                                <div className="btn-group w-100" role="group" aria-label="Button Group" style={{ marginTop: "30px", marginBottom: "30px" }}>
+                                  <button
+                                    onClick={() => handleFileUploadCancel(task._id)}
+                                    className="btn btn-light w-50 py-2 btn-3d"
+                                    style={{
+                                      border: "none",
+                                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                      transform: "translateY(0)",
+                                      transition: "transform 0.2s ease-in-out",
+                                    }}
+                                  >
+                                    Huỷ
+                                  </button>
+                                  <button
+                                    className="btn btn-dark w-50 py-2 btn-3d"
+                                    onClick={() => handleFileUploadConfirmation(task._id)}
+                                    style={{
+                                      border: "none",
+                                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                      transform: "translateY(0)",
+                                      transition: "transform 0.2s ease-in-out",
+                                    }}
+                                  >
+                                    Xác nhận
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                         

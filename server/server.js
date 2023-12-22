@@ -7,7 +7,8 @@ const dbConfig = require("./app/config/db.config");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:5000"
+  origin: "http://localhost:5000",
+  limit:"50mb",
 };
 
 app.use(cors())
