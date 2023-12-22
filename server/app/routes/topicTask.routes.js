@@ -11,6 +11,7 @@ module.exports = function (app) {
 
     app.post('/api/topicTasks', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.addTopicTask);
     app.get('/api/topicTasks', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getAllTopicTasks);
+    app.get('/api/topicTasks/topic/:topicId', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getAllTopicTasksTopic);
     app.get('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isStudentOrLectureOrFacultyHead], topicTaskController.getTopicTaskDetail);
     app.put('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.updateTopicTask);
     app.delete('/api/topicTasks/:topicTaskId', [authJwt.verifyToken, authJwt.isLectureOrFacultyHead], topicTaskController.deleteTopicTask);

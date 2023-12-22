@@ -84,16 +84,17 @@ export const UpdateTopicTask = async (topicTaskId,taskName, description, deadlin
       return { message: 'Fail' };
     }
 }
-export const AddTopicTask = async (taskName, description, deadline, topic)=>{
+export const AddTopicTask = async (accessToken,taskName, description, deadline, topic)=>{
   try {
       const response = await fetch(`/api/topicTasks/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
         },
         body: JSON.stringify({taskName, description, deadline, topic })
       });
-      const data = await response.json();
+      const data = response;
       return data
     }
     catch (error) {
@@ -135,16 +136,17 @@ export const uploadTaskFile = async (topicTaskId, file) => {
   }
 };
 
-export const CommentTopicTask = async (topicTaskId,comment )=>{
+export const CommentTopicTask = async (accessToken,topicTaskId,comment )=>{
   try {
       const response = await fetch(`/api/topicTasks/${topicTaskId}/comment`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
         },
         body: JSON.stringify({ comment })
       });
-      const data = await response.json();
+      const data =  response;
       return data
     }
     catch (error) {
@@ -238,7 +240,7 @@ export const UpdateProfileLecturer = async (accessToken,id, phoneNumber, address
 
 export const assignInstructor = async (accessToken,topicId, instructor )=>{
   try {
-      const response = await fetch(`/api/topics/${topicId}/register`, {
+      const response = await fetch(`/api/topics/${topicId}/assignins`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +248,7 @@ export const assignInstructor = async (accessToken,topicId, instructor )=>{
         },
         body: JSON.stringify({ instructor })
       });
-      const data =  await response.json();
+      const data =  response;
       return data
     }
     catch (error) {
@@ -271,3 +273,22 @@ export const approveTopic = async (accessToken,topicId )=>{
       return { message: 'Fail' };
     }
 }
+
+export const GetTopicTasksTopic = async (accessToken,topicId )=>{
+  try {
+      const response = await fetch(`/api/topicTasks/topic/${topicId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+
+

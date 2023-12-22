@@ -18,7 +18,7 @@ module.exports = {
                 topic,
             });
 
-            res.json(newTopicTask);
+            res.status(201).json(newTopicTask);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -28,6 +28,17 @@ module.exports = {
     getAllTopicTasks: async (req, res) => {
         try {
             const topicTasks = await TopicTask.find();
+            res.json(topicTasks);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+    getAllTopicTasksTopic: async (req, res) => {
+        try {
+            
+            const { topicId } = req.params;
+            const topicTasks = await TopicTask.find({topic:topicId});
             res.json(topicTasks);
         } catch (error) {
             console.error(error);
@@ -135,6 +146,7 @@ module.exports = {
             if (!topicTaskId) {
                 return res.status(400).json({ error: 'Topic Task ID is required' });
             }
+            console.log("Topic TaskID:",topicTaskId)
 
             const updatedTopicTask = await TopicTask.findByIdAndUpdate(
                 topicTaskId,
@@ -148,7 +160,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic Task not found' });
             }
 
-            res.json(updatedTopicTask);
+            res.status(201).json(updatedTopicTask);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });

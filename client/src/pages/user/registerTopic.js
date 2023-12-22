@@ -19,8 +19,8 @@ export const RegisterTopicPage = () => {
   const [role, setRole] = useState();
   const [token, setToken] = useState();
   const [hasSession, setHasSession] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-  const [isRegistered, setIsRegistered] = useState(false); // Registration state
+  const [isLoading, setIsLoading] = useState(true); 
+  const [isRegistered, setIsRegistered] = useState(false); 
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -63,6 +63,7 @@ export const RegisterTopicPage = () => {
                   (topic) => topic.students.length !== 2 && topic.instructor!==null
                 )
         }else if (role[0]==="ROLE_LECTURE"){
+          console.log("Check lecturer",role[0])
             filteredTopics = response.filter(
                 (topic) => topic.instructor===null
               )
@@ -76,7 +77,7 @@ export const RegisterTopicPage = () => {
         console.log("Failed to fetch topics:", error);
         setIsLoading(false);
       });
-  }, [student]);
+  }, [role,student]);
 
   return (
     <div className="Homepage" style={{ width: "100%" }}>
@@ -112,7 +113,7 @@ export const RegisterTopicPage = () => {
       ) : (
         <div>
           {isRegistered ? (
-            <h2 style={{ textAlign: "center" }}>You have already registered</h2>
+            <h2 style={{ textAlign: "center" }}>Bạn đã đăng ký đề tài rồi</h2>
           ) : (
             <div>
               <h2 style={{ textAlign: "center" }}>Tất cả đề tài</h2>
