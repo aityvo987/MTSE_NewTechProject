@@ -51,7 +51,7 @@ export const ApproveTopicPage = () => {
       .then((response) => {
         let filteredTopics=[];
         filteredTopics = response.filter(
-            (topic) => topic.instructor!==null && topic.students.length>0 && !topic.isApproved
+            (topic) =>  !topic.isApproved
             )
         setTopics(filteredTopics);
         

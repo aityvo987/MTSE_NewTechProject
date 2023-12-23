@@ -256,7 +256,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic not found' });
             }
 
-            res.json(updatedTopic);
+            res.status(201).json(updatedTopic);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });

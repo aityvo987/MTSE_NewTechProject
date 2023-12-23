@@ -90,10 +90,9 @@ export const RegisterTopicPage = () => {
               });
               setIsRegistered(registeredTopics.length > 0);
               filteredTopics = response.filter(
-                  (topic) => topic.students.length !== 2 && topic.instructor!==null
+                  (topic) => topic.students.length !== 2 
                 )
         }else if (role[0]==="ROLE_LECTURE"){
-          
             filteredTopics = response.filter(
                 (topic) => topic.instructor===null
               )

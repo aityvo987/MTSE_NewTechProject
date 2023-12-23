@@ -53,7 +53,7 @@ export const AssignThesisPage = () => {
         const [topicsResponse, lecturersResponse] = await Promise.all([GetTopics(token), GetAllLecturers(token)]);
   
         const filteredTopics = topicsResponse.filter(
-          (topic) => topic.instructor !== null && topic.students.length > 0 && topic.isApproved
+          (topic) =>  topic.isApproved
         );
   
         setTopics(filteredTopics);

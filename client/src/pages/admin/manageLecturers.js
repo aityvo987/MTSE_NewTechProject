@@ -100,7 +100,7 @@ export const ManageLecturers = () => {
      UpdateLecturer(token, editLecturer._id,editLecturer.name, editLecturer.lectureId, editLecturer.email, editLecturer.dateOfBirth, "", editLecturer.faculty,editLecturer.isFacultyHead)
       .then((response) => {
         console.log("Update",response);
-        if (response.status === 200) {
+        if (response.status === 201) {
           alert("Lecturer updated");
           window.location.reload();
         } else if (response.status === 404) {

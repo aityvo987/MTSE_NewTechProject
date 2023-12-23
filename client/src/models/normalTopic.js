@@ -48,9 +48,8 @@ export const NormalTopic = (props) => {
         const response = await assignInstructor (props.token,props.topic._id, props.lecture);
       if (response.status===201) {
         window.alert('Đăng ký GVHD thành công.');
-        if (response.success) {
-          window.location.reload();
-        }
+        window.location.reload();
+        
       } else {
         window.alert('Failed to register for the course.');
       }
