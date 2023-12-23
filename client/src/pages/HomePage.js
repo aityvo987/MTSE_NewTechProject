@@ -13,6 +13,8 @@ export default function Homepage() {
   const [roles, setRoles] = useState();
   const [isEmpty, setIsEmpty] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
 
   useEffect(() => {
     GetUserSession().then((response) => {
@@ -40,7 +42,9 @@ export default function Homepage() {
       }
     });
   }, []);
-
+  const handleNotificationClick = (index) => {
+    setSelectedNotification(notifications[index]);
+  };
   return (
     <div className="hot-topic-section">
       {!hasSession ? (
@@ -109,18 +113,18 @@ export default function Homepage() {
         }}
       >
         <h2 style={{ textAlign: "center" }}>Thông báo</h2>
-        <div className="courses-container" style={{ display: "flex", paddingBottom: "10px", width: "50%" }}>
+          <div className="courses-container" style={{ display: "flex", paddingBottom: "10px", width: "50%" }}>
           <ul className="list-group" style={{ width: "100%" }}>
             {isEmpty ? (
               <li className="list-group-item">Không có thông báo nào hết</li>
             ) : (
               <>
                 {notifications.map((notify, index) => (
-                  <li key={index} className="list-group-item" style={{ width: "100%" }}>
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div className="ms-2 me-auto">
+                  <li key={index} className="list-group-item" style={{ width: "100%", cursor: "pointer" }} onClick={() => handleNotificationClick(index)}>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <div style={{ textAlign: "center" }}>
                         <div className="fw-bold">{notify.title}</div>
-                        Date: {notify.lastUpdatedAt.split("T")[0]}
+                        <div style={{ color: "#777" }}>Ngày: {notify.lastUpdatedAt.split("T")[0]}</div>
                       </div>
                     </div>
                   </li>
@@ -129,6 +133,12 @@ export default function Homepage() {
             )}
           </ul>
         </div>
+        {selectedNotification && (
+          <div className="notification-content" style={{ textAlign: "center", marginTop:"20px" }}>
+            <h3>{selectedNotification.title}</h3>
+            <p>{selectedNotification.content}</p>
+          </div>
+        )}
       </div>
     </div>
   );

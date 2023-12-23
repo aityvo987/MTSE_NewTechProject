@@ -242,12 +242,12 @@ export const ManageLecturers = () => {
                         value={1}
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
-                        checked={editLecturer?editLecturer.isFacultyHead:false}
-                        onChange={(e) =>
-                          setEditLecturer({
-                            ...editLecturer,
-                            isFacultyHead: e.target.checked,
-                          })
+                        checked={editLecturer ? editLecturer.isFacultyHead : false}
+                        onClick={() =>
+                          setEditLecturer((prevEditLecturer) => ({
+                            ...prevEditLecturer,
+                            isFacultyHead: !prevEditLecturer?.isFacultyHead,
+                          }))
                         }
                       />
                       <label className="form-check-label" htmlFor="flexRadioDefault1">
@@ -256,6 +256,7 @@ export const ManageLecturers = () => {
                     </div>
                   </div>
                 </div>
+
               </form>
                 <button
                   type="button"

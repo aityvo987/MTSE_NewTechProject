@@ -43,11 +43,12 @@ exports.signup = (req, res) => {
             }
 
             roles.map(role => {
-              res.status(201).send({ message: `User was registered successfully!` });
+              
             })
           });
         }
       );
+      res.status(201).send({ message: `User was registered successfully!` });
     } else {
       Role.findOne({ name: "Student" }, (err, role) => {
         if (err) {
