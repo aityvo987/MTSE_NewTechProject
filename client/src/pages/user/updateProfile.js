@@ -189,19 +189,7 @@ export const UpdateProfile = () => {
                               />
                             </div>
                           </div>
-                          <div className="row mb-3">
-                            <div className="col-sm-3">
-                              <h6 className="mb-0">Chuyên ngành</h6>
-                            </div>
-                            <div className="col-sm-9 text-secondary">
-                              <input
-                                type="text"
-                                className="form-control"
-                                defaultValue={profile.major?profile.major.majorName:""}
-                                readOnly
-                              />
-                            </div>
-                          </div>
+                          
                           <div className="row mb-3">
                         <div className="col-sm-3">
                           <h6 className="mb-0">Số điện thoại</h6>

@@ -71,23 +71,24 @@ export const ManageLecturers = () => {
        return;
      }
      
-     Promise.all([
-       AddAccount(token, editLecturer.email, editLecturer.email, "123456",["Lecture","Faculty Head"]),
-       AddLecturer(token, editLecturer.name, editLecturer.lectureId, editLecturer.email, editLecturer.dateOfBirth, "", editLecturer.faculty,editLecturer.isFacultyHead)
-     ])
-       .then(([accountData, lecturerData]) => {
-        console.log("Create",lecturerData);
-         if (accountData.status === 201 && lecturerData.status === 201) {
-           alert("Account and lecturer created");
-           window.location.reload();
-         } else {
-           alert("Error creating account or lecturer");
-         }
-       })
-       .catch((error) => {
-         console.error("Error:", error);
-         alert("Internal error, please try again sometime later");
-       });
+      const addFacultyHeadRole = editLecturer.isFacultyHead ? ["Lecture", "Faculty Head"] : ["Lecture"];
+      Promise.all([
+        AddAccount(token, editLecturer.email, editLecturer.email, "123456", addFacultyHeadRole),
+        AddLecturer(token, editLecturer.name, editLecturer.lectureId, editLecturer.email, editLecturer.dateOfBirth, "", editLecturer.faculty, editLecturer.isFacultyHead)
+      ])
+        .then(([accountData, lecturerData]) => {
+          console.log("Create", lecturerData);
+          if (accountData.status === 201 && lecturerData.status === 201) {
+            alert("Account and lecturer created");
+            window.location.reload();
+          } else {
+            alert("Error creating account or lecturer");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("Internal error, please try again sometime later");
+        });
     }
     else {
       console.log("Update lecturer",editLecturer);
@@ -133,6 +134,7 @@ export const ManageLecturers = () => {
           console.log("Delete", response);
           if (response.status === 201) {
             alert("Lecturer deleted");
+            window.location.reload();
           } else {
             alert(response.message);
           }
