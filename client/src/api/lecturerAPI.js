@@ -291,4 +291,20 @@ export const GetTopicTasksTopic = async (accessToken,topicId )=>{
     }
 }
 
-
+export const AssignThesisLecture = async (accessToken,topicId,thesisLecture )=>{
+  try {
+      const response = await fetch(`/api/topics/${topicId}/assign`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({ thesisLecture })
+      });
+      const data =  response;
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}

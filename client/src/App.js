@@ -16,6 +16,7 @@ import { AdminPage } from './pages/admin/adminDashBoard';
 import { RegisterTopicPage } from './pages/user/registerTopic';
 import { ApproveTopicPage } from './pages/user/approveTopic';
 import {ManageTopic} from './pages/user/manageTopic';
+import { AssignThesisPage } from './pages/user/assignThesis';
 function App() {
   // const [backendData, setBackendData] = useState ([{}])
   // useEffect (() => {
@@ -45,6 +46,7 @@ function App() {
             <Route path='/register' element={<RegisterTopicPage/>}/>
             <Route path='/approve' element={<ApproveTopicPage/>}/>
             <Route path='/manage' element={<ManageTopic/>}/>
+            <Route path='/assign' element={<AssignThesisPage/>}/>
           </Routes>
         </Router>
       </div>

@@ -48,9 +48,14 @@ export const NavigationBar = (props) => {
                                 <a class="nav-link active" aria-current="page" href="/register">Đăng ký đề tài</a>
                             </li>
                             {props.role.includes("ROLE_FACULTY HEAD") && (
+                            <div>
                             <li className="nav-item">
                                 <a className="nav-link active" aria-current="page" href="/approve">Duyệt đề tài</a>
                             </li>
+                            <li className="nav-item">
+                                <a className="nav-link active" aria-current="page" href="/assign">Phân công GVPB</a>
+                            </li>
+                            </div>
                             )}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">

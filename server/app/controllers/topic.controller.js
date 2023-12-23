@@ -14,7 +14,7 @@ module.exports = {
                 topicPeriod,
             } = req.body;
             let instructor = null;
-            let thesislecture = null;
+            let thesisLecture = null;
             // if (students != null) {
             //     const areStudentsValid = students.every(studentId => mongoose.Types.ObjectId.isValid(studentId));
 
@@ -43,7 +43,7 @@ module.exports = {
                 major,
                 topicPeriod,
                 instructor,
-                thesislecture,
+                thesisLecture,
             });
 
             const savedTopic = await newTopic.save();
@@ -59,6 +59,7 @@ module.exports = {
         try {
             const topics = await Topic.find()
                 .populate('instructor')
+                .populate('thesisLecture')
                 .populate('students')
                 .populate('faculty')
                 .populate('major')
@@ -247,7 +248,7 @@ module.exports = {
                 return res.status(404).json({ error: 'Topic not found' });
             }
 
-            res.json(updatedTopic);
+            res.status(201).json(updatedTopic);
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
