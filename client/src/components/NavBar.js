@@ -8,7 +8,6 @@ export const NavigationBar = (props) => {
         SignOut()
         navigate('/')
     }
-    console.log("Roles",props.role)
 
     return (
         <nav style={{position:'static',marginBottom:'35px'}} class="navbar bg-body-tertiary fixed-top">

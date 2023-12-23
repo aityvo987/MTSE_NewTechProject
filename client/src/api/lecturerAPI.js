@@ -15,16 +15,17 @@ export const ApproveTopic = async (topicId )=>{
       }
   }
 
-export const AddTopic = async (topicName,description,students,faculty,major,topicPeriod, )=>{
+  export const AddTopic = async (accessToken,topicName,description,students,faculty,major,topicPeriod, )=>{
     try {
-        const response = await fetch(`/api/topics/`, {
+        const response = await fetch(`/api/topics`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': `${accessToken}`,
           },
           body: JSON.stringify({topicName,description,students,faculty,major,topicPeriod,  })
         });
-        const data = await response.json();
+        const data = response;
         return data
       }
       catch (error) {
