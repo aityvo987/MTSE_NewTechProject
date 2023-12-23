@@ -4,20 +4,6 @@ import { GetAllNotifications,GetNotification } from '../api/generalAPI';
 
 export const DefaultNavBar = ()=>{
 
-    const [isEmpty,setIsEmpty]= useState(false);
-    const [notifications,setNotifications] = useState([]);
-    useEffect(() => {
-        GetAllNotifications()
-            .then(respone => {
-                console.log(respone)
-                setNotifications(respone)
-                if(respone.message){
-                  setIsEmpty(true)
-                  console.log(respone.message)
-
-                }
-            })
-    }, [])
 
     
     return(
@@ -47,25 +33,6 @@ export const DefaultNavBar = ()=>{
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="/lecturer">Danh sách giảng viên</a>
-                            </li>
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Announcements
-                                </a>
-                                <ul className="dropdown-menu">
-                                    {isEmpty ? (
-                                    <li><a className="dropdown-item" href="#">No announcement</a></li>
-                                    ) : (
-                                    <>  
-                                        {notifications.map((notify, index) => (
-                                        <div key={index}>
-                                            <li><a className="dropdown-item" href="#">{notify.title} (Date: {notify.lastUpdatedAt.split("T")[0]})</a></li>
-                                        </div>
-                                        ))}
-                                       
-                                    </>
-                                    )}
-                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="/login">Sign in</a>
