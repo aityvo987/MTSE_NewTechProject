@@ -71,6 +71,41 @@ module.exports = {
         }
     },
 
+    getTopicsNotApproved: async (req, res) => {
+        try {
+            const notApprovedTopics = await Topic.find({ isApproved: false })
+                .populate('instructor')
+                .populate('thesisLecture')
+                .populate('students')
+                .populate('faculty')
+                .populate('major')
+                .populate('topicPeriod');
+            
+            res.status(200).json(notApprovedTopics);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+    
+    // Controller to get topics that are approved
+    getTopicsApproved: async (req, res) => {
+        try {
+            const approvedTopics = await Topic.find({ isApproved: true })
+                .populate('instructor')
+                .populate('thesisLecture')
+                .populate('students')
+                .populate('faculty')
+                .populate('major')
+                .populate('topicPeriod');
+            
+            res.status(200).json(approvedTopics);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
     getTopicDetail: async (req, res) => {
         try {
             const { topicId } = req.params;
