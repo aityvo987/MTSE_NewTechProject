@@ -16,7 +16,7 @@ const topicSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lecture',
     },
-    thesislecture: {
+    thesisLecture: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lecture',
     },
