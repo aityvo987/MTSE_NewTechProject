@@ -1,33 +1,141 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { GetAllSchoolYears, AddSchoolYear,UpdateSchoolYear,DeleteSchoolYear} from "../../api/adminAPI";
+import { GetUserSession } from "../../api/generalAPI";
 export const ManageYears = () => {
   const navigate = useNavigate();
-  const [accountsData, setAccountsData] = useState([]);
-  const [sortColumn, setSortColumn] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [isLoading, setIsLoading] = useState(false); 
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); 
+  const [deleteYear, setDeleteYear] = useState(null); 
   const [showForm, setShowForm] = useState(false);
+  const [editYear, setEditYear] = useState(null);
+  const [user, setUser] = useState();
+  const [role, setRole] = useState();
+  const [token, setToken] = useState();
+  const [hasSession, setHasSession] = useState(false);
+  
+  const [years,setYears]= useState([]);
+  const [isCreate, setIsCreate]= useState(true); 
 
+
+  useEffect(() => {
+    GetUserSession()
+      .then((response) => {
+        if (response.userinfo !== null && typeof response.userinfo !== "undefined") {
+          console.log("GetUserSession", response);
+          setUser(response.userinfo);
+          setRole(response.roles);
+          setToken(response.accessToken);
+          setHasSession(true);
+          if (response.roles.includes('ROLE_ADMIN')) {
+          } else {
+            navigate("/");
+          }
+          GetAllSchoolYears(response.accessToken)
+            .then((years) => {
+              setYears(years);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log("error");
+        }
+      });
+  }, []);
+  
   const toggleForm = () => {
     setShowForm(!showForm);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit =async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    // ...
+    
+    if (isCreate){
+      console.log("Create year",editYear);
+      if (!editYear.name ||!editYear.startDate || !editYear.dueDate  ) {
+       window.alert('Please fill in required field.');
+       return;
+     }
+     
+     AddSchoolYear(token, editYear.name,editYear.startDate,editYear.dueDate)
+       .then((response) => {
+         if (response.status === 201) {
+           alert("Year created");
+           window.location.reload();
+         } else {
+           alert("Error creating year");
+         }
+       })
+       .catch((error) => {
+         console.error("Error:", error);
+         alert("Internal error, please try again sometime later");
+       });
+    }
+    else {
+      console.log("Update year",editYear);
+      if (!editYear.name ) {
+        window.alert('Please fill in required field.');
+        return;
+      }
+     UpdateSchoolYear(token,editYear._id, editYear.majorName,editYear.startDate,editYear.dueDate)
+      .then((response) => {
+        console.log("Update",response);
+        if (response.status === 201) {
+          alert("Year updated");
+          window.location.reload();
+        } else if (response.status === 404) {
+          alert("Can't find year");
+        } else {
+          alert("Internal error");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Internal error, please try again sometime later");
+      });
+    }
+    
+  };
+
+  const handleEdit = (year) => {
+    setEditYear(year);
+    setIsCreate(false);
+    setShowForm(true);
+  };
+  const handleDelete = (year) => {
+    setDeleteYear(year);
+  };
+
+  const confirmDelete = () => {
+    if (deleteYear) {
+      console.log("Deleting", deleteYear._id);
+      DeleteSchoolYear(token, deleteYear._id)
+        .then((response) => {
+          console.log("Delete", response);
+          if (response.status === 201) {
+            alert("Year deleted");
+          } else {
+            alert(response.message);
+          }
+        })
+        .finally(() => {
+          setDeleteYear(null);
+        });
+    }
+  };
+  const cancelDelete = () => {
+    setDeleteYear(null);
   };
   const handleFormCancel = () => {
     setShowForm(false);
-    // Reset form fields or perform any necessary cleanup
-    // ...
+    setEditYear(null);
+    setIsCreate(true);
   };
   
   return (
       <div className="content-admin">
-        <h1 className="centered">Danh sách niên khoá</h1>
+        <h1>Danh sách niên khoá</h1>
         {isLoading ? (
           <div className="d-flex align-items-center">
             <strong role="status">Loading...</strong>
@@ -38,24 +146,56 @@ export const ManageYears = () => {
             
             <button type="button" className="btn btn-primary btn-sm" onClick={toggleForm}>
                     Thêm
-                  </button>
+            </button>
+            {deleteYear && (
+              <div className="confirmation-dialog">
+                <p>Bạn có chắc là muốn xoá niên khoá này không</p>
+                <button className="btn btn-danger" onClick={confirmDelete}>
+                  Có
+                </button>
+                <button className="btn btn-secondary" onClick={cancelDelete}>
+                  Không
+                </button>
+              </div>
+            )}      
             {showForm && (
             <div className="form-edit">
               <form onSubmit={handleFormSubmit}>
-              <form>
+              <form className="content-form" style={{marginBottom:"50px"}}>
                 <div class="form-floating mb-3">
-                    <input type='text' class="form-control" id="floatingInput0" placeholder="username" />
-                    <label for="floatingInput">Tên niên khóa</label>
+                    <input type="text" class="form-control" id="name" 
+                    placeholder="name student"value={editYear?editYear.name:""}
+                    onChange={(e) =>
+                      setEditYear({ ...editYear, name: e.target.value })
+                    } />
+                    <label for="floatingPassword">Tên niên khoá</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword1" placeholder="Password" />
-                    <label for="floatingPassword">Năm bắt đầu</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="startDate"
+                    placeholder="name student"
+                    value={editYear ? editYear.startDate : ""}
+                    onChange={(e) =>
+                      setEditYear({ ...editYear, startDate: e.target.value })
+                    }
+                  />
+                  <label for="floatingPassword">Ngày bắt đầu</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword2" placeholder="Retype Password" />
-                    <label for="floatingPassword">Năm kết thúc</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="dueDate"
+                    placeholder="name student"
+                    value={editYear ? editYear.dueDate : ""}
+                    onChange={(e) =>
+                      setEditYear({ ...editYear, dueDate: e.target.value })
+                    }
+                  />
+                  <label for="floatingPassword">Ngày kết thúc</label>
                 </div>
-                
                 </form>
                 <button
                   type="button"
@@ -70,61 +210,45 @@ export const ManageYears = () => {
               </form>
             </div>
           )}
-            <table className="table">
+            <table className="table smaller-table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Niên khóa</th>
-                  <th scope="col">Năm bắt đầu</th>
-                  <th scope="col">Năm kết thúc</th>
+                  <th scope="col">Tên niên khoá</th>
+                  <th scope="col">Ngày bắt đầu</th>
+                  <th scope="col">Ngày kết thúc</th>
                 </tr>
               </thead>
               <tbody>
-                {/* {sortedAccounts.map((account, index) => (
-                  <tr key={account._id}>
+                {years.map((year, index) => (
+                  <tr key={year._id}>
                     <th scope="row">{index + 1}</th>
+                    <td>{year.name}</td>
+                    <td>{year.startDate}</td>
+                    <td>{year.dueDate}</td>
                     <td>
-                      <img src={account.avatar} alt="Avatar" className="avatar-img" style={{objectFit:"cover",width:50,height:50}} />
-                    </td>
-                    <td>{account.username}</td>
-                    <td>{account.name}</td>
-                    <td>{account.role}</td>
-                    <td>{account.email}</td>
-                    <td>{account.createdAt}</td>
-                    <td>
-                      {deleteConfirmation === account._id ? (
-                        <div className="d-flex align-items-center">
-                          <button
-                            type="button"
-                           className="btn btn-danger btn-sm me-2"
-                            onClick={() => confirmDelete(account._id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-secondary btn-sm"
-                            onClick={cancelDelete}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
+                    <button
                           type="button"
                           className="btn btn-primary btn-sm"
-                          onClick={() => deleteButtonHandler(account._id)}
+                          onClick={() => handleEdit(year)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-warning btn-sm"
+                          onClick={() => handleDelete(year)}
                         >
                           Delete
                         </button>
-                      )}
                     </td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </div>
         )}
+        
       </div>
   );
 };

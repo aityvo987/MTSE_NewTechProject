@@ -26,7 +26,7 @@ export const Topic = (props) => {
               <span className="label" style={{display: 'inline-block'}}>Người thực hiện:</span> {props.students}
           </p>
           <p className="card-text">
-              <span className="label"style={{display: 'inline-block'}}>Niên Khoá:</span> {props.data.topicPeriod?props.data.topicPeriod.topicPeriodName:""}
+              <span className="label"style={{display: 'inline-block'}}>Đợt:</span> {props.data.topicPeriod?props.data.topicPeriod.topicPeriodName:""}
           </p>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Báo cáo chi tiết

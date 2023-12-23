@@ -58,7 +58,6 @@ export const AssignThesisPage = () => {
   
         setTopics(filteredTopics);
         setLecturers(lecturersResponse);
-        console.log("Lecturers,",lecturersResponse)
         setIsLoading(false);
       } catch (error) {
         console.log("Failed to fetch topics and lecturers:", error);

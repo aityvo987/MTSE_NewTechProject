@@ -26,7 +26,10 @@ export const ManageMajors = () => {
           setRole(response.roles);
           setToken(response.accessToken);
           setHasSession(true);
-          
+          if (response.roles.includes('ROLE_ADMIN')) {
+          } else {
+            navigate("/");
+          }
           GetAllMajors(response.accessToken)
             .then((majors) => {
               setMajors(majors);
@@ -126,7 +129,7 @@ export const ManageMajors = () => {
   };
   const handleFormCancel = () => {
     setShowForm(false);
-    setDeleteMajor(null);
+    setEditMajor(null);
     setIsCreate(true);
   };
   

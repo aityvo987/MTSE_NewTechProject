@@ -483,3 +483,71 @@ export const DeletMajor = async (accessToken,majorId )=>{
       return { message: 'Fail' };
     }
 }
+//School year
+
+export const GetAllSchoolYears = async (accessToken)=>{
+  try {
+      const response = await fetch(`/api/schoolYears`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const UpdateSchoolYear = async (accessToken,schoolYearId,name,startDate,dueDate )=>{
+  try {
+      const response = await fetch(`/api/schoolYears/${schoolYearId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({name,startDate,dueDate  })
+      });
+      const data =response;
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const AddSchoolYear = async (accessToken,name,startDate,dueDate)=>{
+  try {
+      const response = await fetch(`/api/schoolYears`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+        body: JSON.stringify({name,startDate,dueDate })
+      });
+      const data = response;
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}
+export const DeleteSchoolYear = async (accessToken,schoolYearId )=>{
+  try {
+      const response = await fetch(`/api/schoolYears/${schoolYearId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': `${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      return data
+    }
+    catch (error) {
+      return { message: 'Fail' };
+    }
+}

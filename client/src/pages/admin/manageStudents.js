@@ -28,8 +28,13 @@ export const ManageStudents = () => {
           console.log("GetUserSession", response);
           setUser(response.userinfo);
           setRole(response.roles);
+          if (response.roles.includes('ROLE_ADMIN')) {
+          } else {
+            navigate("/");
+          }
           setToken(response.accessToken);
           setHasSession(true);
+          if (response.roles)
           
           Promise.all([GetAllStudents(response.accessToken), GetAllAccounts(response.accessToken),GetAllFaculties(response.accessToken)
             ,GetAllMajors(response.accessToken)])
@@ -54,7 +59,7 @@ export const ManageStudents = () => {
               console.log(error);
             });
         } else {
-          console.log("error");
+          navigate("/");
         }
       });
   }, []);

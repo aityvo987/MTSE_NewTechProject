@@ -35,7 +35,10 @@ export const ManageTopics = () => {
           setRole(response.roles);
           setToken(response.accessToken);
           setHasSession(true);
-          
+          if (response.roles.includes('ROLE_ADMIN')) {
+          } else {
+            navigate("/");
+          }
           Promise.all([GetAllStudents(response.accessToken), GetAllLecturers(response.accessToken),GetAllFaculties(response.accessToken)
             ,GetAllMajors(response.accessToken),GetAllTopics(response.accessToken),GetAllTopicPeriods(response.accessToken)])
             .then(([students, lecturers, faculties,majors,topics,topicperiods]) => {

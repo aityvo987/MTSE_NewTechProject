@@ -26,7 +26,10 @@ export const ManagePeriods = () => {
           setRole(response.roles);
           setToken(response.accessToken);
           setHasSession(true);
-          
+          if (response.roles.includes('ROLE_ADMIN')) {
+          } else {
+            navigate("/");
+          }
           GetAllTopicPeriods(response.accessToken)
             .then((periods) => {
               setPeriods(periods);
@@ -36,7 +39,7 @@ export const ManagePeriods = () => {
               console.log(error);
             });
         } else {
-          console.log("error");
+          navigate("/");
         }
       });
   }, []);
